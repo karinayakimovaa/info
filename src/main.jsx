@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { Toaster } from 'react-hot-toast'
 import App from './App.jsx'
 import './style.css'
-import { Analytics } from '@vercel/analytics/next';
+import { Analytics } from '@vercel/analytics/react'
 
 ReactDOM.createRoot(document.getElementById('app')).render(
   <React.StrictMode>

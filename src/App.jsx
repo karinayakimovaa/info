@@ -9,36 +9,66 @@ const services = [
     title: "Поиск себя и своего пути",
     description:
       "Когда сложно понять, чего вы хотите, и куда двигаться дальше.",
+    num: "01",
   },
   {
     title: "Самооценка и принятие себя",
     description:
       "Опора во внутреннем диалоге: меньше самокритики, больше поддержки к себе.",
+    num: "02",
   },
   {
-    title: "Повседневные трудности, тревога и стресс",
+    title: "Тревога и стресс",
     description:
       "Разбираем перегрузку, тревожные сценарии и то, что мешает жить спокойнее.",
+    num: "03",
   },
   {
-    title: "Конфликты в общении и отношениях",
+    title: "Конфликты и отношения",
     description:
       "Понятнее про границы, ожидания и то, как говорить и слышать друг друга.",
+    num: "04",
   },
 ];
 
 const steps = [
-  "Онлайн на платформе Яндекс Телемост: подключиться просто, формат конфиденциальный, приложение устанавливать не нужно.",
-  "Первым делом напишите ваш примерный запрос — обсудим, смогу ли я вам помочь и подходит ли вам такая работа.",
-  "Возможна разовая консультация или продолжительная терапия — темп и глубину выбираем вместе.",
+  {
+    title: "Платформа",
+    body: "Онлайн на Яндекс Телемост — подключиться просто, конфиденциально, без установки приложения.",
+  },
+  {
+    title: "Первый контакт",
+    body: "Напишите примерный запрос — обсудим, смогу ли я помочь и подходит ли вам такой формат.",
+  },
+  {
+    title: "Темп — ваш",
+    body: "Разовая консультация или продолжительная терапия — глубину и ритм выбираем вместе.",
+  },
 ];
 
-const titleFont = "[font-family:'Cormorant_Garamond',serif]";
+const asset = (path) => `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
 const telegramUsername = String(import.meta.env.VITE_TELEGRAM_USERNAME || "")
   .trim()
   .replace(/^@+/, "");
 
-const asset = (path) => `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
+/* ─── tiny hook: fade-in on scroll ─── */
+function useFadeIn() {
+  useEffect(() => {
+    const els = document.querySelectorAll("[data-fade]");
+    const io = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("is-visible");
+            io.unobserve(e.target);
+          }
+        }),
+      { threshold: 0.12 }
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+}
 
 export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -49,148 +79,79 @@ export default function App() {
   const closeTimerRef = useRef(null);
   const headerRef = useRef(null);
 
+  useFadeIn();
+
   const closeModal = useCallback(() => setIsModalOpen(false), []);
   const openModal = () => setIsModalOpen(true);
 
+  /* lock scroll when modal open */
   useEffect(() => {
     if (isModalOpen) {
       const scrollY = window.scrollY;
-      document.body.style.overflow = "hidden";
-      document.body.style.position = "fixed";
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = "100%";
+      document.body.style.cssText = `overflow:hidden;position:fixed;top:-${scrollY}px;width:100%`;
       nameInputRef.current?.focus();
     } else {
       const scrollY = document.body.style.top;
-      document.body.style.overflow = "";
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.width = "";
-      if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY || "0", 10) * -1);
-      }
+      document.body.style.cssText = "";
+      if (scrollY) window.scrollTo(0, parseInt(scrollY) * -1);
     }
-
-    return () => {
-      document.body.style.overflow = "";
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.width = "";
-    };
+    return () => (document.body.style.cssText = "");
   }, [isModalOpen]);
 
+  /* keyboard + smooth anchors */
   useEffect(() => {
     document.documentElement.classList.add("scroll-smooth");
-
-    const onKeyDown = (event) => {
-      if (event.key === "Escape") {
-        closeModal();
-        setIsMenuOpen(false);
-      }
+    const onKey = (e) => {
+      if (e.key === "Escape") { closeModal(); setIsMenuOpen(false); }
     };
-
-    const onAnchorClick = (event) => {
-      const anchor = event.target.closest('a[href^="#"]');
-      if (!anchor) return;
-
-      const href = anchor.getAttribute("href");
+    const onAnchor = (e) => {
+      const a = e.target.closest('a[href^="#"]');
+      if (!a) return;
+      const href = a.getAttribute("href");
       if (!href || href === "#") return;
-
       const target = document.querySelector(href);
       if (!target) return;
-
-      event.preventDefault();
-      const headerOffset = headerRef.current?.offsetHeight ?? 80;
-      const top =
-        target.getBoundingClientRect().top + window.scrollY - headerOffset;
-      window.scrollTo({ top, behavior: "smooth" });
+      e.preventDefault();
+      const offset = headerRef.current?.offsetHeight ?? 72;
+      window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - offset, behavior: "smooth" });
       setIsMenuOpen(false);
     };
-
-    document.addEventListener("keydown", onKeyDown);
-    document.addEventListener("click", onAnchorClick);
-
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("click", onAnchor);
     return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      document.removeEventListener("click", onAnchorClick);
-      document.documentElement.classList.remove("scroll-smooth");
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("click", onAnchor);
     };
   }, [closeModal]);
 
-  useEffect(() => {
-    return () => {
-      if (closeTimerRef.current) {
-        clearTimeout(closeTimerRef.current);
-      }
-    };
-  }, []);
+  useEffect(() => () => clearTimeout(closeTimerRef.current), []);
 
   const botToken = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
   const chatId = import.meta.env.VITE_TELEGRAM_CHAT_ID;
-  
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-  
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-  
-    const payload = {
-      name: String(formData.get("name") || "").trim(),
-      contact: String(formData.get("contact") || "").trim(),
-      message: String(formData.get("message") || "").trim(),
-      page: window.location.href,
-    };
-  
-    if (!payload.name || !payload.contact || !payload.message) {
-      toast.error("Заполните все поля.");
-      return;
-    }
-  
-    if (!botToken || !chatId) {
-      toast.error("Telegram bot не настроен.");
-      return;
-    }
-  
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const name = String(fd.get("name") || "").trim();
+    const contact = String(fd.get("contact") || "").trim();
+    const message = String(fd.get("message") || "").trim();
+
+    if (!name || !contact || !message) { toast.error("Заполните все поля."); return; }
+    if (!botToken || !chatId) { toast.error("Telegram bot не настроен."); return; }
+
     setIsSubmitting(true);
-  
-    const text = [
-      "Новая заявка",
-      "",
-      `Имя: ${payload.name}`,
-      `Контакт: ${payload.contact}`,
-      `Сообщение: ${payload.message}`,
-    ].join("\n");
-  
+    const text = `Новая заявка\n\nИмя: ${name}\nКонтакт: ${contact}\nСообщение: ${message}`;
     try {
-      const body = new URLSearchParams({
-        chat_id: chatId,
-        text,
+      const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ chat_id: chatId, text }),
       });
-  
-      const response = await fetch(
-        `https://api.telegram.org/bot${botToken}/sendMessage`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body,
-        }
-      );
-  
-      if (!response.ok) {
-        throw new Error("Ошибка Telegram API");
-      }
-  
+      if (!res.ok) throw new Error();
       toast.success("Заявка отправлена");
-  
-      form.reset();
-  
-      closeTimerRef.current = setTimeout(() => {
-        closeModal();
-      }, 600);
-    } catch (error) {
-      console.error(error);
+      e.target.reset();
+      closeTimerRef.current = setTimeout(closeModal, 600);
+    } catch {
       toast.error("Ошибка отправки");
     } finally {
       setIsSubmitting(false);
@@ -198,481 +159,732 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_0_0,_#f8f3eb_0%,_transparent_42%),radial-gradient(circle_at_90%_12%,_#ecd5bd_0%,_transparent_35%),#f3ede3] px-3 py-3 text-[#241f1a] [font-family:Manrope,sans-serif] md:px-6 md:py-5">
-      <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[32px] border border-[#d8cab8] bg-[linear-gradient(180deg,rgba(255,250,244,0.92),rgba(255,250,244,1))] shadow-[0_24px_44px_rgba(59,38,20,0.14)]">
-        <div className="pointer-events-none absolute -right-28 -top-32 h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle,rgba(228,176,149,0.38),transparent_70%)]" />
-        <div className="pointer-events-none absolute -bottom-40 -left-24 h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle,rgba(95,116,101,0.28),transparent_66%)]" />
+    <>
+      {/* ── global styles injected ── */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
 
-        <header
-          ref={headerRef}
-          className="sticky top-0 z-40 border-b border-[#d8cab8cc] bg-[#fffaf4eb] px-3 py-2 backdrop-blur md:px-8 md:py-0"
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+          --cream:   #faf6f0;
+          --sand:    #ede5d8;
+          --warm:    #c9b49a;
+          --copper:  #b5622e;
+          --copper2: #9b4f22;
+          --bark:    #3a2316;
+          --mist:    #5f7464;
+          --mist2:   #3d5242;
+          --text:    #2a1f14;
+          --sub:     #6b5d50;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+          background: var(--cream);
+          font-family: 'DM Sans', sans-serif;
+          color: var(--text);
+          -webkit-font-smoothing: antialiased;
+        }
+
+        /* fade-in utility */
+        [data-fade] { opacity: 0; transform: translateY(28px); transition: opacity .72s cubic-bezier(.25,.8,.25,1), transform .72s cubic-bezier(.25,.8,.25,1); }
+        [data-fade].is-visible { opacity: 1; transform: none; }
+        [data-fade][data-delay="1"] { transition-delay: .08s; }
+        [data-fade][data-delay="2"] { transition-delay: .18s; }
+        [data-fade][data-delay="3"] { transition-delay: .28s; }
+        [data-fade][data-delay="4"] { transition-delay: .38s; }
+
+        /* ── HEADER ── */
+        .site-header {
+          position: sticky; top: 0; z-index: 50;
+          background: rgba(250,246,240,.88);
+          backdrop-filter: blur(14px);
+          border-bottom: 1px solid rgba(180,156,130,.28);
+          padding: 0 40px;
+          display: flex; align-items: center; justify-content: space-between;
+          height: 68px;
+        }
+        @media(max-width:767px){.site-header{padding:0 18px;height:58px;}}
+
+        .logo-wordmark {
+          font-family: 'Cormorant Garamond', serif;
+          font-weight: 500;
+          font-size: 18px;
+          letter-spacing: .22em;
+          color: var(--bark);
+          text-transform: uppercase;
+          text-decoration: none;
+          line-height: 1.2;
+        }
+        .logo-sub {
+          display: block;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 9px;
+          font-weight: 400;
+          letter-spacing: .28em;
+          color: var(--sub);
+          text-transform: uppercase;
+          margin-top: 2px;
+        }
+
+        .header-nav { display: flex; gap: 36px; }
+        .header-nav a {
+          font-size: 13px; font-weight: 400; letter-spacing: .04em;
+          color: var(--sub); text-decoration: none;
+          transition: color .2s;
+        }
+        .header-nav a:hover { color: var(--text); }
+        @media(max-width:900px){.header-nav{display:none;}}
+
+        .btn-primary {
+          display: inline-flex; align-items: center; gap: 6px;
+          background: var(--copper);
+          color: #fff;
+          border: none; cursor: pointer;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 13px; font-weight: 500; letter-spacing: .06em;
+          padding: 10px 24px;
+          border-radius: 100px;
+          text-decoration: none;
+          transition: background .22s, transform .18s, box-shadow .22s;
+          box-shadow: 0 6px 22px rgba(181,98,46,.28);
+        }
+        .btn-primary:hover { background: var(--copper2); transform: translateY(-2px); box-shadow: 0 10px 28px rgba(181,98,46,.38); }
+        .btn-primary:active { transform: translateY(0); }
+
+        .btn-ghost {
+          display: inline-flex; align-items: center;
+          background: transparent;
+          color: var(--copper);
+          border: 1.5px solid var(--copper);
+          cursor: pointer;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 13px; font-weight: 500; letter-spacing: .06em;
+          padding: 9px 22px;
+          border-radius: 100px;
+          text-decoration: none;
+          transition: background .2s, color .2s;
+        }
+        .btn-ghost:hover { background: rgba(181,98,46,.07); }
+
+        .hamburger {
+          display: none; background: none; border: 1.5px solid var(--warm);
+          border-radius: 8px; width: 42px; height: 42px;
+          cursor: pointer; align-items: center; justify-content: center;
+          color: var(--text); font-size: 20px; line-height: 1;
+        }
+        @media(max-width:900px){.hamburger{display:flex;}}
+        @media(min-width:901px){.header-cta{display:inline-flex;}}
+
+        /* mobile menu */
+        .mobile-menu {
+          display: none; flex-direction: column; gap: 16px;
+          padding: 20px 18px 18px;
+          background: var(--cream);
+          border-bottom: 1px solid rgba(180,156,130,.28);
+        }
+        .mobile-menu.open { display: flex; }
+        .mobile-menu a { font-size: 15px; color: var(--sub); text-decoration: none; }
+
+        /* ── LAYOUT ── */
+        .site-wrap { max-width: 1180px; margin: 0 auto; padding: 0 40px; }
+        @media(max-width:767px){.site-wrap{padding:0 18px;}}
+
+        /* ── HERO ── */
+        .hero {
+          padding: 80px 0 70px;
+          display: grid;
+          grid-template-columns: 1fr 420px;
+          gap: 56px;
+          align-items: center;
+        }
+        @media(max-width:960px){.hero{grid-template-columns:1fr;gap:40px;padding:52px 0 44px;}}
+
+        .hero-tag {
+          display: inline-flex; align-items: center; gap: 8px;
+          font-size: 11px; font-weight: 500; letter-spacing: .16em;
+          text-transform: uppercase; color: var(--mist);
+          background: rgba(95,116,100,.1);
+          padding: 5px 14px; border-radius: 100px;
+          margin-bottom: 24px;
+        }
+        .hero-tag::before {
+          content: ''; width: 6px; height: 6px; border-radius: 50%;
+          background: var(--mist); flex-shrink: 0;
+        }
+
+        .hero-h1 {
+          font-family: 'Cormorant Garamond', serif;
+          font-weight: 400;
+          font-size: clamp(52px, 7vw, 88px);
+          line-height: 1.0;
+          letter-spacing: -.01em;
+          color: var(--bark);
+        }
+        .hero-h1 em { font-style: italic; color: var(--copper); }
+
+        .hero-desc {
+          margin-top: 24px;
+          font-size: 16px; line-height: 1.8;
+          color: var(--sub); max-width: 44ch;
+        }
+
+        .hero-actions { margin-top: 36px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+
+        .hero-link {
+          font-size: 13px; font-weight: 500; letter-spacing: .04em;
+          color: var(--mist); text-decoration: none;
+          border-bottom: 1px solid currentColor; padding-bottom: 1px;
+          transition: color .2s;
+        }
+        .hero-link:hover { color: var(--mist2); }
+
+        .hero-pills { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
+        .hero-pill {
+          font-size: 12px; color: var(--sub);
+          border: 1px solid var(--warm);
+          border-radius: 100px; padding: 5px 14px;
+          background: rgba(255,255,255,.55);
+        }
+
+        /* ── HERO CARD ── */
+        .hero-card {
+          background: linear-gradient(155deg, #fff8f0 0%, #f4ede1 100%);
+          border: 1px solid rgba(180,156,130,.45);
+          border-radius: 28px;
+          overflow: hidden;
+          position: relative;
+        }
+        .hero-card-img { width: 100%; height: 260px; object-fit: cover; display: block; }
+        .hero-card-body { padding: 24px 28px 28px; }
+        .hero-card-quote {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 28px; font-weight: 400; font-style: italic;
+          color: var(--copper); line-height: 1.35; margin-top: 10px;
+        }
+
+        /* ── SECTION HEADER ── */
+        .section-label {
+          display: inline-flex; align-items: center; gap: 8px;
+          font-size: 10px; font-weight: 500; letter-spacing: .2em;
+          text-transform: uppercase; color: var(--mist);
+          margin-bottom: 14px;
+        }
+        .section-label::before { content: ''; display: block; width: 20px; height: 1px; background: var(--mist); }
+
+        .section-h2 {
+          font-family: 'Cormorant Garamond', serif;
+          font-weight: 400;
+          font-size: clamp(36px, 5vw, 58px);
+          line-height: 1.06;
+          color: var(--bark);
+        }
+        .section-h2 em { font-style: italic; color: var(--copper); }
+
+        /* ── MOOD STRIP ── */
+        .mood-strip {
+          padding: 64px 0;
+          border-top: 1px solid rgba(180,156,130,.22);
+        }
+        .mood-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 18px;
+          margin-top: 36px;
+        }
+        @media(max-width:680px){.mood-grid{grid-template-columns:1fr; gap:14px;}}
+        .mood-img { width: 100%; height: 220px; object-fit: cover; border-radius: 20px; display: block; }
+
+        /* ── SERVICES ── */
+        .services-section { padding: 64px 0; border-top: 1px solid rgba(180,156,130,.22); }
+
+        .services-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 2px;
+          margin-top: 44px;
+          border: 1.5px solid rgba(180,156,130,.35);
+          border-radius: 24px;
+          overflow: hidden;
+        }
+        @media(max-width:680px){.services-grid{grid-template-columns:1fr;}}
+
+        .service-card {
+          padding: 32px 32px 36px;
+          background: #fdfaf6;
+          transition: background .22s;
+          position: relative;
+        }
+        .service-card:hover { background: #fff; }
+        .service-card:nth-child(1) { border-right: 1.5px solid rgba(180,156,130,.35); border-bottom: 1.5px solid rgba(180,156,130,.35); }
+        .service-card:nth-child(2) { border-bottom: 1.5px solid rgba(180,156,130,.35); }
+        .service-card:nth-child(3) { border-right: 1.5px solid rgba(180,156,130,.35); }
+
+        .service-num {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 13px; font-weight: 400; letter-spacing: .18em;
+          color: var(--warm);
+        }
+        .service-title {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 26px; font-weight: 500;
+          color: var(--bark);
+          margin-top: 8px; line-height: 1.25;
+        }
+        .service-desc {
+          font-size: 14px; line-height: 1.75;
+          color: var(--sub); margin-top: 12px;
+        }
+
+        /* ── PROCESS ── */
+        .process-section { padding: 64px 0; border-top: 1px solid rgba(180,156,130,.22); }
+
+        .process-list { display: flex; flex-direction: column; gap: 0; margin-top: 44px; }
+        .process-item {
+          display: grid;
+          grid-template-columns: 48px 1fr;
+          gap: 24px;
+          padding: 28px 0;
+          border-bottom: 1px solid rgba(180,156,130,.22);
+          align-items: start;
+        }
+        .process-item:first-child { border-top: 1px solid rgba(180,156,130,.22); }
+
+        .process-num {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 40px; font-weight: 300; color: rgba(181,98,46,.2);
+          line-height: 1;
+        }
+        .process-title {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 22px; font-weight: 500; color: var(--bark);
+          margin-bottom: 8px;
+        }
+        .process-body { font-size: 15px; line-height: 1.75; color: var(--sub); }
+
+        /* ── TRUST BLOCK ── */
+        .trust-section { padding: 64px 0; border-top: 1px solid rgba(180,156,130,.22); }
+        .trust-inner {
+          background: linear-gradient(130deg, #f8efe2 0%, #ede6d9 100%);
+          border: 1px solid rgba(180,156,130,.38);
+          border-radius: 24px;
+          padding: 52px 56px;
+          display: flex; align-items: flex-start; gap: 40px;
+        }
+        @media(max-width:680px){.trust-inner{flex-direction:column;padding:36px 28px;gap:20px;}}
+        .trust-icon {
+          flex-shrink: 0; width: 48px; height: 48px;
+          background: var(--copper); border-radius: 12px;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 22px;
+        }
+        .trust-text { font-size: 16px; line-height: 1.8; color: var(--sub); }
+        .trust-text strong { color: var(--bark); font-weight: 500; }
+
+        /* ── PRICING ── */
+        .pricing-section { padding: 64px 0; border-top: 1px solid rgba(180,156,130,.22); }
+        .pricing-inner {
+          display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+          margin-top: 44px;
+        }
+        @media(max-width:680px){.pricing-inner{grid-template-columns:1fr;}}
+
+        .pricing-card {
+          background: #fdfaf6;
+          border: 1.5px solid rgba(180,156,130,.35);
+          border-radius: 20px; padding: 32px 32px 36px;
+        }
+        .pricing-amount {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 52px; font-weight: 400; color: var(--bark);
+          line-height: 1; margin: 12px 0 4px;
+        }
+        .pricing-label { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--mist); }
+        .pricing-note { font-size: 14px; line-height: 1.7; color: var(--sub); margin-top: 14px; }
+
+        /* ── CONTACTS ── */
+        .contacts-section { padding: 64px 0 80px; border-top: 1px solid rgba(180,156,130,.22); }
+        .contacts-inner {
+          background: var(--bark);
+          border-radius: 28px; padding: 56px 60px;
+          display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start;
+        }
+        @media(max-width:760px){.contacts-inner{grid-template-columns:1fr;padding:38px 28px;gap:36px;}}
+
+        .contacts-h2 {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: clamp(32px, 4.5vw, 52px); font-weight: 400;
+          color: var(--cream); line-height: 1.08;
+        }
+        .contacts-h2 em { font-style: italic; color: #e4a97a; }
+        .contacts-sub { font-size: 15px; line-height: 1.8; color: rgba(250,246,240,.6); margin-top: 16px; }
+
+        .contacts-actions { display: flex; flex-direction: column; gap: 14px; margin-top: 36px; }
+        .contact-link-btn {
+          display: inline-flex; align-items: center; gap: 10px;
+          font-size: 14px; font-weight: 500;
+          color: var(--cream); text-decoration: none;
+          background: rgba(255,255,255,.08);
+          border: 1px solid rgba(255,255,255,.14);
+          border-radius: 100px; padding: 12px 22px;
+          transition: background .2s;
+          cursor: pointer; font-family: inherit;
+        }
+        .contact-link-btn:hover { background: rgba(255,255,255,.14); }
+
+        .contacts-tg { font-size: 13px; color: rgba(250,246,240,.5); margin-top: 8px; }
+        .contacts-tg a { color: #e4a97a; text-decoration: none; }
+
+        /* ── FOOTER ── */
+        .site-footer {
+          border-top: 1px solid rgba(180,156,130,.22);
+          padding: 28px 40px;
+          display: flex; justify-content: space-between; align-items: center;
+          font-size: 12px; color: var(--warm); letter-spacing: .06em;
+        }
+        @media(max-width:767px){.site-footer{padding:22px 18px;flex-direction:column;gap:6px;text-align:center;}}
+
+        /* ── MODAL ── */
+        .modal-overlay {
+          position: fixed; inset: 0; z-index: 100;
+          background: rgba(18,12,6,.62); backdrop-filter: blur(4px);
+          display: grid; place-items: center;
+          opacity: 0; visibility: hidden;
+          transition: opacity .28s, visibility .28s;
+        }
+        .modal-overlay.open { opacity: 1; visibility: visible; }
+
+        .modal-box {
+          position: relative; z-index: 1;
+          background: #fdfaf6;
+          border: 1px solid rgba(180,156,130,.45);
+          border-radius: 24px; padding: 40px 40px 44px;
+          width: min(540px, calc(100vw - 36px));
+          box-shadow: 0 32px 64px rgba(30,18,8,.22);
+          transform: translateY(18px);
+          transition: transform .32s cubic-bezier(.25,.8,.25,1);
+        }
+        .modal-overlay.open .modal-box { transform: none; }
+
+        .modal-close {
+          position: absolute; top: 14px; right: 14px;
+          width: 32px; height: 32px; border-radius: 50%;
+          border: 1px solid var(--sand); background: #fff;
+          cursor: pointer; font-size: 18px; line-height: 1;
+          color: var(--sub); display: flex; align-items: center; justify-content: center;
+          transition: background .18s;
+        }
+        .modal-close:hover { background: var(--sand); }
+
+        .modal-h2 {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 36px; font-weight: 400; color: var(--bark);
+          margin-top: 10px;
+        }
+        .modal-sub { font-size: 13px; line-height: 1.7; color: var(--sub); margin-top: 6px; }
+
+        .form-group { display: flex; flex-direction: column; gap: 5px; margin-top: 18px; }
+        .form-label { font-size: 12px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--sub); }
+        .form-input {
+          width: 100%; padding: 11px 16px;
+          border: 1.5px solid var(--sand);
+          border-radius: 12px; background: #fff;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 14px; color: var(--text);
+          outline: none; transition: border-color .2s, box-shadow .2s;
+        }
+        .form-input:focus { border-color: var(--mist); box-shadow: 0 0 0 3px rgba(95,116,100,.14); }
+        textarea.form-input { resize: vertical; min-height: 100px; }
+
+        .scroll-indicator {
+          display: flex; align-items: center; gap: 8px;
+          font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+          color: var(--warm);
+        }
+        .scroll-line { width: 32px; height: 1px; background: var(--warm); }
+      `}</style>
+
+      {/* ── HEADER ── */}
+      <header className="site-header" ref={headerRef}>
+        <a href="#" className="logo-wordmark" aria-label="Карина Якимова — главная">
+          КАРИНА ЯКИМОВА
+          <span className="logo-sub">Практикующий психолог · онлайн</span>
+        </a>
+
+        <nav className="header-nav" aria-label="Основная навигация">
+          <a href="#about">Обо мне</a>
+          <a href="#services">Услуги</a>
+          <a href="#process">Формат</a>
+          <a href="#pricing">Стоимость</a>
+          <a href="#contacts">Контакты</a>
+        </nav>
+
+        <button className="btn-primary header-cta" style={{display:"none"}} onClick={openModal} type="button">
+          Записаться
+        </button>
+        <style>{`@media(min-width:901px){.header-cta{display:inline-flex!important;}}`}</style>
+
+        <button
+          className="hamburger"
+          type="button"
+          aria-label={isMenuOpen ? "Закрыть меню" : "Открыть меню"}
+          onClick={() => setIsMenuOpen(v => !v)}
         >
-          <div className="flex min-w-0 items-center justify-between gap-2 sm:gap-3 md:gap-6">
-            <a
-              href="#"
-              className="flex min-w-0 flex-1 items-center overflow-hidden pr-1 md:flex-none md:overflow-visible md:pr-0"
-              aria-label="Карина Якимова — главная"
-            >
-              <svg
-                width="520"
-                height="120"
-                viewBox="0 0 420 80"
-                xmlns="http://www.w3.org/2000/svg"
-                role="img"
-                aria-hidden="true"
-                preserveAspectRatio="xMinYMid meet"
-                className="h-12 w-auto max-w-full shrink md:h-[120px]"
-              >
-                <style>{`
-                  .ky-name { font-family: 'Cormorant Garamond', Cormorant, Georgia, serif; font-size: 22px; font-weight: 600; letter-spacing: 0.16em; fill: #2c1a0e; }
-                  .ky-sub  { font-family: 'Cormorant Garamond', Cormorant, Georgia, serif; font-size: 9.5px; font-weight: 400; letter-spacing: 0.34em; fill: #5c3d2e; }
-                  .ky-mono { font-family: 'Cormorant Garamond', Cormorant, Georgia, serif; font-size: 52px; font-weight: 400; fill: none; stroke: #7a3e1e; stroke-width: 1; dominant-baseline: central; }
-                  .ky-mfill{ font-family: 'Cormorant Garamond', Cormorant, Georgia, serif; font-size: 52px; font-weight: 400; fill: #2c1a0e; opacity: 0.07; dominant-baseline: central; }
-                  .ky-circ { stroke: #7a5c44; stroke-width: 0.7; fill: none; }
-                  .ky-line { stroke: #7a5c44; stroke-width: 0.6; }
-                  .ky-div  { stroke: #4a2e1a; stroke-width: 0.7; }
-                `}</style>
-                <circle
-                  cx="40"
-                  cy="40"
-                  r="34"
-                  className="ky-circ"
-                  strokeDasharray="2 4"
-                />
-                <text className="ky-mfill" x="40" y="40" textAnchor="middle">
-                  К
-                </text>
-                <text className="ky-mono" x="40" y="40" textAnchor="middle">
-                  К
-                </text>
-                <circle cx="40" cy="3" r="2.2" fill="#7a3e1e" />
-                <line className="ky-div" x1="84" y1="14" x2="84" y2="66" />
-                <text className="ky-name" x="98" y="36">
-                  КАРИНА ЯКИМОВА
-                </text>
-                <line className="ky-line" x1="98" y1="48" x2="360" y2="48" />
-                <text className="ky-sub" x="98" y="62">
-                  ПРАКТИКУЮЩИЙ ПСИХОЛОГ · ОНЛАЙН
-                </text>
-              </svg>
-            </a>
+          {isMenuOpen ? "×" : "≡"}
+        </button>
+      </header>
 
-            <nav className="hidden flex-1 items-center justify-center gap-10 text-[15px] text-[#6d6157] md:flex">
-              <a className="transition hover:text-[#241f1a]" href="#about">
-                Обо мне
-              </a>
-              <a className="transition hover:text-[#241f1a]" href="#services">
-                Услуги
-              </a>
-              <a className="transition hover:text-[#241f1a]" href="#process">
-                Формат работы
-              </a>
-              <a className="transition hover:text-[#241f1a]" href="#pricing">
-                Стоимость
-              </a>
-              <a className="transition hover:text-[#241f1a]" href="#contacts">
-                Контакты
-              </a>
-            </nav>
+      {/* mobile nav */}
+      <div className={`mobile-menu ${isMenuOpen ? "open" : ""}`}>
+        <a href="#about">Обо мне</a>
+        <a href="#services">Услуги</a>
+        <a href="#process">Формат работы</a>
+        <a href="#pricing">Стоимость</a>
+        <a href="#contacts">Контакты</a>
+        <button className="btn-primary" style={{width:"fit-content",marginTop:4}} type="button" onClick={openModal}>
+          Записаться
+        </button>
+      </div>
 
-            <button
-              className="hidden rounded-full bg-[#bb6c45] px-4 py-2 text-sm font-bold text-white shadow-[0_10px_24px_rgba(187,108,69,0.3)] transition hover:-translate-y-0.5 hover:bg-[#a45c39] md:inline-flex"
-              type="button"
-              onClick={openModal}
-            >
-              Записаться
-            </button>
-
-            <button
-              type="button"
-              className="inline-flex h-11 min-h-[44px] w-11 min-w-[44px] shrink-0 items-center justify-center rounded-full border border-[#b89a82] bg-[#fffdf8] text-xl leading-none text-[#2c241c] shadow-sm md:hidden"
-              aria-label={isMenuOpen ? "Закрыть меню" : "Открыть меню"}
-              onClick={() => setIsMenuOpen((value) => !value)}
-            >
-              <span aria-hidden="true" className="block translate-y-px">
-                {isMenuOpen ? "×" : "≡"}
-              </span>
-            </button>
-          </div>
-
-          <div className={`${isMenuOpen ? "block" : "hidden"} pt-2 md:hidden`}>
-            <nav className="flex flex-col gap-2 pb-2 text-sm text-[#6d6157]">
-              <a className="transition hover:text-[#241f1a]" href="#about">
-                Обо мне
-              </a>
-              <a className="transition hover:text-[#241f1a]" href="#services">
-                Услуги
-              </a>
-              <a className="transition hover:text-[#241f1a]" href="#process">
-                Формат работы
-              </a>
-              <a className="transition hover:text-[#241f1a]" href="#pricing">
-                Стоимость
-              </a>
-              <a className="transition hover:text-[#241f1a]" href="#contacts">
-                Контакты
-              </a>
-              <button
-                className="mt-1 w-max rounded-full bg-[#bb6c45] px-4 py-2 text-sm font-bold text-white shadow-[0_10px_24px_rgba(187,108,69,0.3)] transition hover:-translate-y-0.5 hover:bg-[#a45c39]"
-                type="button"
-                onClick={openModal}
-              >
-                Записаться
-              </button>
-            </nav>
-          </div>
-        </header>
-
-        <main className="relative z-10 px-4 pb-5 pt-4 md:px-8 md:pb-6 md:pt-8">
-          <div id="about" className="scroll-mt-28">
-            <section className="grid gap-4 md:grid-cols-[1.2fr_0.8fr]">
-              <div className="rounded-[26px] border border-[#d8cab8f2] bg-[#fffdf8] p-5 md:p-9">
-                <p className="inline-flex rounded-full bg-[#eaf0ea] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#5f7465]">
-                  Практикующий психолог · онлайн
-                </p>
-                <h1
-                  className={`${titleFont} mt-4 text-4xl leading-[1.04] md:text-6xl`}
-                >
-                  Карина Якимова
-                </h1>
-                <p className="mt-4 max-w-[46ch] text-[15px] leading-7 text-[#6d6157] md:text-base">
-                  Помогаю справляться с повседневными трудностями, находить опору
-                  и понимать себя. Студентка 4 курса по направлению «Кризисная
-                  психология и медиация в образовании».
-                </p>
-
-                <div className="mt-6 flex flex-wrap items-center gap-4">
-                  <button
-                    className="rounded-full bg-[#bb6c45] px-5 py-2.5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(187,108,69,0.36)] transition hover:-translate-y-0.5 hover:bg-[#a45c39]"
-                    type="button"
-                    onClick={openModal}
-                  >
-                    Начать
-                  </button>
-                  <a
-                    className="text-sm font-bold text-[#5f7465]"
-                    href="#services"
-                  >
-                    Смотреть услуги
-                  </a>
-                </div>
-
-                <ul className="mt-5 flex flex-wrap gap-2">
-                  <li className="rounded-full border border-dashed border-[#d8cab8] bg-[#fffaf4] px-3 py-1.5 text-sm text-[#6d6157]">
-                    Яндекс Телемост
-                  </li>
-                  <li className="rounded-full border border-dashed border-[#d8cab8] bg-[#fffaf4] px-3 py-1.5 text-sm text-[#6d6157]">
-                    Индивидуально
-                  </li>
-                  <li className="rounded-full border border-dashed border-[#d8cab8] bg-[#fffaf4] px-3 py-1.5 text-sm text-[#6d6157]">
-                    Разово или длительно
-                  </li>
-                </ul>
-              </div>
-
-              <aside className="rounded-[26px] border border-[#d8cab8f2] bg-[linear-gradient(165deg,#fff6ec,#fffdf8)] p-5 md:p-8">
-                <div className="mb-4 overflow-hidden rounded-2xl border border-[#c8b29c] md:h-56">
-                  <img
-                    src={asset("photos/yoga-sunrise.png")}
-                    alt=""
-                    className="h-48 w-full object-cover md:h-56"
-                  />
-                </div>
-                <p className="inline-flex rounded-full bg-[#eaf0ea] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#5f7465]">
-                  Обо мне
-                </p>
-                <h2 className={`${titleFont} mt-4 text-3xl leading-tight`}>
-                  Бережное сопровождение
-                </h2>
-                <p className="mt-3 text-[15px] leading-7 text-[#6d6157] md:text-base">
-                  Рядом на темах поиска себя, самооценки, стресса и отношений —
-                  в том темпе, который вам сейчас доступен.
-                </p>
-                <p className={`${titleFont} mt-6 text-3xl text-[#bb6c45]`}>
-                  Опора и ясность шаг за шагом
-                </p>
-              </aside>
-            </section>
-          </div>
-
-          <section className="mt-6">
-            <div className="px-1 pb-3">
-              <p className="inline-flex rounded-full bg-[#eaf0ea] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#5f7465]">
-                Настроение
+      {/* ── HERO ── */}
+      <main>
+        <div className="site-wrap">
+          <section id="about" className="hero" style={{scrollMarginTop:72}}>
+            <div data-fade>
+              <p className="hero-tag">Практикующий психолог</p>
+              <h1 className="hero-h1">
+                Опора и ясность —<br/>
+                <em>шаг за шагом</em>
+              </h1>
+              <p className="hero-desc">
+                Помогаю справляться с повседневными трудностями, находить опору
+                и понимать себя. Студентка 4 курса по направлению «Кризисная
+                психология и медиация в образовании».
               </p>
-              <h2
-                className={`${titleFont} mt-3 text-3xl leading-tight md:text-5xl`}
-              >
-                Пространство для себя
-              </h2>
+              <div className="hero-actions">
+                <button className="btn-primary" type="button" onClick={openModal}>
+                  Записаться
+                </button>
+                <a className="hero-link" href="#services">Смотреть услуги</a>
+              </div>
+              <ul className="hero-pills" style={{listStyle:"none"}}>
+                <li className="hero-pill">Яндекс Телемост</li>
+                <li className="hero-pill">Индивидуально</li>
+                <li className="hero-pill">Разово или длительно</li>
+              </ul>
             </div>
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="overflow-hidden rounded-[26px] border border-[#d8cab8f2] md:h-52">
-                <img
-                  src={asset("photos/meadow.png")}
-                  alt=""
-                  className="h-44 w-full object-cover md:h-52"
-                />
-              </div>
-              <div className="overflow-hidden rounded-[26px] border border-[#d8cab8f2] md:h-52">
-                <img
-                  src={asset("photos/lake-quote.png")}
-                  alt=""
-                  className="h-44 w-full object-cover md:h-52"
-                />
-              </div>
-              <div className="overflow-hidden rounded-[26px] border border-[#d8cab8f2] md:h-52">
+
+            <div data-fade data-delay="2">
+              <div className="hero-card">
                 <img
                   src={asset("photos/yoga-sunrise.png")}
                   alt=""
-                  className="h-44 w-full object-cover md:h-52"
+                  className="hero-card-img"
                 />
+                <div className="hero-card-body">
+                  <p className="section-label">Бережное сопровождение</p>
+                  <p className="hero-card-quote">
+                    Рядом в том темпе,<br/>который вам доступен
+                  </p>
+                </div>
               </div>
-            </div>
-          </section>
-
-          <div id="services" className="mt-6 scroll-mt-28">
-            <section>
-              <div className="px-1 pb-3">
-                <p className="inline-flex rounded-full bg-[#eaf0ea] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#5f7465]">
-                  Услуги
-                </p>
-                <h2
-                  className={`${titleFont} mt-3 text-3xl leading-tight md:text-5xl`}
-                >
-                  С чем я работаю
-                </h2>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                {services.map((item, index) => (
-                  <article
-                    key={item.title}
-                    className="rounded-[26px] border border-[#d8cab8f2] bg-[#fffdf8] p-5"
-                  >
-                    <span className="mb-4 inline-block h-[18px] w-[18px] rounded-full bg-[linear-gradient(145deg,#e4b095,#bb6c45)]" />
-                    <h3 className={`${titleFont} text-2xl`}>
-                      {index + 1}. {item.title}
-                    </h3>
-                    <p className="mt-2 text-[15px] leading-7 text-[#6d6157] md:text-base">
-                      {item.description}
-                    </p>
-                  </article>
-                ))}
-              </div>
-            </section>
-          </div>
-
-          <div id="process" className="mt-6 scroll-mt-28">
-            <section>
-              <div className="px-1 pb-3">
-                <p className="inline-flex rounded-full bg-[#eaf0ea] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#5f7465]">
-                  Процесс
-                </p>
-                <h2
-                  className={`${titleFont} mt-3 text-3xl leading-tight md:text-5xl`}
-                >
-                  Как мы будем работать
-                </h2>
-              </div>
-
-              <ol className="grid gap-4 md:grid-cols-3">
-                {steps.map((step, index) => (
-                  <li
-                    key={index}
-                    className="rounded-[26px] border border-[#d8cab8f2] bg-[#fffdf8] p-5"
-                  >
-                    <h3 className={`${titleFont} text-2xl`}>Шаг {index + 1}</h3>
-                    <p className="mt-2 text-[15px] leading-7 text-[#6d6157] md:text-base">
-                      {step}
-                    </p>
-                  </li>
-                ))}
-              </ol>
-            </section>
-          </div>
-
-          <section className="mt-6">
-            <div className="px-1 pb-3">
-              <p className="inline-flex rounded-full bg-[#eaf0ea] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#5f7465]">
-                Доверие
-              </p>
-              <h2
-                className={`${titleFont} mt-3 text-3xl leading-tight md:text-5xl`}
-              >
-                Важно для доверия
-              </h2>
-            </div>
-
-            <div className="rounded-[26px] border border-[#d8cab8f2] bg-[#fffdf8] p-6 md:p-8">
-              <p className="m-0 max-w-[62ch] text-[15px] leading-7 text-[#6d6157] md:text-base">
-                Я сама регулярно прохожу личную терапию и работаю с
-                супервизором — это моя профессиональная этика и залог качества
-                вашей поддержки.
-              </p>
-            </div>
-          </section>
-
-          <div id="pricing" className="mt-6 scroll-mt-28">
-            <section>
-              <div className="px-1 pb-3">
-                <p className="inline-flex rounded-full bg-[#eaf0ea] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#5f7465]">
-                  Оплата
-                </p>
-                <h2
-                  className={`${titleFont} mt-3 text-3xl leading-tight md:text-5xl`}
-                >
-                  Стоимость и оплата
-                </h2>
-              </div>
-
-              <div className="rounded-[26px] border border-[#d8cab8f2] bg-[#fffdf8] p-6 md:p-8">
-                <p className="m-0 max-w-[62ch] text-[15px] leading-7 text-[#6d6157] md:text-base">
-                  Оплата принимается до начала сессии на карту по номеру телефона
-                  или номеру карты. Реквизиты пришлю после записи.
-                </p>
-                <p className="mt-4 max-w-[62ch] text-[15px] leading-7 text-[#6d6157] md:text-base">
-                  Фиксированной стоимости нет — сколько желаете и можете;
-                  минимальная сумма за сессию —{" "}
-                  <span className="font-semibold text-[#241f1a]">1200 ₽</span>.
-                </p>
-              </div>
-            </section>
-          </div>
-        </main>
-
-        <div id="contacts" className="scroll-mt-28">
-          <section className="relative z-10 mx-4 mt-1 grid gap-3 rounded-[26px] border border-[#d8cab8f2] bg-[linear-gradient(130deg,#fff9f2_0%,#f1ebdf_100%)] p-5 md:mx-8 md:p-6">
-            <p className="inline-flex w-max rounded-full bg-[#eaf0ea] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#5f7465]">
-              Контакты
-            </p>
-            <h2 className={`${titleFont} text-3xl leading-tight md:text-4xl`}>
-              Записаться или задать вопрос
-            </h2>
-            <p className="text-[15px] leading-7 text-[#6d6157] md:text-base">
-              Напишите примерный запрос — обсудим формат и сможем ли мы
-              поработать вместе. Также можно оставить заявку через форму ниже.
-            </p>
-            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-              <a
-                className="w-max rounded-full bg-[#bb6c45] px-5 py-2.5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(187,108,69,0.36)] transition hover:-translate-y-0.5 hover:bg-[#a45c39]"
-                href={`tel:${phoneTel}`}
-              >
-                Позвонить {phoneDisplay}
-              </a>
-              {telegramUsername ? (
-                <a
-                  className="text-sm font-bold text-[#5f7465] underline-offset-4 hover:underline"
-                  href={`https://t.me/${telegramUsername}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Telegram @{telegramUsername}
-                </a>
-              ) : (
-                <span className="text-sm font-semibold text-[#5f7465]">
-                  Telegram — можно написать по этому же номеру.
-                </span>
-              )}
-              <button
-                className="w-max rounded-full border border-[#bb6c45] bg-transparent px-5 py-2.5 text-sm font-bold text-[#bb6c45] transition hover:bg-[#bb6c4514]"
-                type="button"
-                onClick={openModal}
-              >
-                Оставить заявку
-              </button>
             </div>
           </section>
         </div>
 
-        <footer className="relative z-10 flex flex-col gap-1 px-4 py-5 text-sm text-[#6d6157] md:flex-row md:justify-between md:px-8 md:py-7">
-          <p>Карина Якимова · практикующий психолог · онлайн</p>
-        </footer>
-      </div>
+        {/* ── MOOD ── */}
+        <div className="site-wrap">
+          <section className="mood-strip">
+            <div data-fade>
+              <p className="section-label">Настроение</p>
+              <h2 className="section-h2">Пространство <em>для себя</em></h2>
+            </div>
+            <div className="mood-grid">
+              {["photos/meadow.png","photos/lake-quote.png","photos/yoga-sunrise.png"].map((src,i)=>(
+                <div key={src} data-fade data-delay={String(i+1)}>
+                  <img src={asset(src)} alt="" className="mood-img"/>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
 
+        {/* ── SERVICES ── */}
+        <div className="site-wrap">
+          <section id="services" className="services-section" style={{scrollMarginTop:72}}>
+            <div data-fade>
+              <p className="section-label">Услуги</p>
+              <h2 className="section-h2">С чем <em>я работаю</em></h2>
+            </div>
+            <div className="services-grid" data-fade data-delay="1">
+              {services.map(item => (
+                <article className="service-card" key={item.title}>
+                  <p className="service-num">{item.num}</p>
+                  <h3 className="service-title">{item.title}</h3>
+                  <p className="service-desc">{item.description}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        {/* ── PROCESS ── */}
+        <div className="site-wrap">
+          <section id="process" className="process-section" style={{scrollMarginTop:72}}>
+            <div data-fade>
+              <p className="section-label">Процесс</p>
+              <h2 className="section-h2">Как мы будем <em>работать</em></h2>
+            </div>
+            <ol className="process-list" style={{listStyle:"none"}}>
+              {steps.map((step,i)=>(
+                <li className="process-item" key={step.title} data-fade data-delay={String(i+1)}>
+                  <span className="process-num">{String(i+1).padStart(2,"0")}</span>
+                  <div>
+                    <p className="process-title">{step.title}</p>
+                    <p className="process-body">{step.body}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+        </div>
+
+        {/* ── TRUST ── */}
+        <div className="site-wrap">
+          <section className="trust-section">
+            <div data-fade>
+              <p className="section-label">Доверие</p>
+              <h2 className="section-h2" style={{marginBottom:28}}>Важно <em>знать</em></h2>
+              <div className="trust-inner">
+                <div className="trust-icon">🌿</div>
+                <p className="trust-text">
+                  Я сама регулярно прохожу <strong>личную терапию</strong> и работаю с
+                  <strong> супервизором</strong> — это моя профессиональная этика и залог
+                  качества вашей поддержки.
+                </p>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        {/* ── PRICING ── */}
+        <div className="site-wrap">
+          <section id="pricing" className="pricing-section" style={{scrollMarginTop:72}}>
+            <div data-fade>
+              <p className="section-label">Оплата</p>
+              <h2 className="section-h2">Стоимость и <em>оплата</em></h2>
+            </div>
+            <div className="pricing-inner">
+              <div className="pricing-card" data-fade data-delay="1">
+                <p className="pricing-label">Минимальная сумма</p>
+                <p className="pricing-amount">1 200 ₽</p>
+                <p className="pricing-note">
+                  Фиксированной стоимости нет — сколько желаете и можете.
+                  Оплата до начала сессии на карту по номеру телефона или номеру карты.
+                </p>
+              </div>
+              <div className="pricing-card" data-fade data-delay="2" style={{background:"linear-gradient(150deg,#f3ebe0,#ede4d5)"}}>
+                <p className="pricing-label">Реквизиты</p>
+                <p className="pricing-amount" style={{fontSize:36,marginTop:14}}>После записи</p>
+                <p className="pricing-note">
+                  Реквизиты для оплаты пришлю после подтверждения записи.
+                  Оплата принимается до начала сессии.
+                </p>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        {/* ── CONTACTS ── */}
+        <div className="site-wrap">
+          <section id="contacts" className="contacts-section" style={{scrollMarginTop:72}}>
+            <div className="contacts-inner" data-fade>
+              <div>
+                <p className="section-label" style={{color:"rgba(250,246,240,.4)"}}>Контакты</p>
+                <h2 className="contacts-h2">
+                  Записаться<br/>или <em>задать вопрос</em>
+                </h2>
+                <p className="contacts-sub">
+                  Напишите примерный запрос — обсудим формат и сможем ли
+                  поработать вместе.
+                </p>
+              </div>
+              <div>
+                <p style={{fontSize:12,letterSpacing:".14em",textTransform:"uppercase",color:"rgba(250,246,240,.38)",marginBottom:14}}>Связаться</p>
+                <div className="contacts-actions">
+                  <a className="contact-link-btn" href={`tel:${phoneTel}`}>
+                    <span>📞</span> {phoneDisplay}
+                  </a>
+                  {telegramUsername ? (
+                    <a className="contact-link-btn" href={`https://t.me/${telegramUsername}`} target="_blank" rel="noreferrer">
+                      <span>✈️</span> @{telegramUsername}
+                    </a>
+                  ) : (
+                    <span style={{fontSize:13,color:"rgba(250,246,240,.45)"}}>
+                      Telegram — по этому же номеру.
+                    </span>
+                  )}
+                  <button className="contact-link-btn" type="button" onClick={openModal}
+                    style={{border:"1.5px solid rgba(228,169,122,.5)",color:"#e4a97a"}}>
+                    ✉️ Оставить заявку
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      {/* ── FOOTER ── */}
+      <footer className="site-footer">
+        <p>Карина Якимова · Практикующий психолог · Онлайн</p>
+        <p style={{fontSize:11}}>© {new Date().getFullYear()}</p>
+      </footer>
+
+      {/* ── MODAL ── */}
       <div
-        className={`fixed inset-0 z-50 grid place-items-center transition ${
-          isModalOpen
-            ? "visible opacity-100"
-            : "invisible pointer-events-none opacity-0"
-        }`}
-        {...(isModalOpen ? { "aria-hidden": false } : {})}
+        className={`modal-overlay ${isModalOpen ? "open" : ""}`}
+        onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}
+        aria-hidden={!isModalOpen}
       >
         <div
-          className="absolute inset-0 bg-[rgba(18,14,10,0.58)] backdrop-blur-[3px]"
-          onClick={closeModal}
-        />
-
-        <div
-          className="relative z-10 mx-4 w-full max-w-[560px] rounded-[22px] border border-[#d8cab8] bg-[#fffaf5] p-5 shadow-[0_24px_44px_rgba(59,38,20,0.14)]"
+          className="modal-box"
           role="dialog"
           aria-modal="true"
-          aria-labelledby="feedback-title"
+          aria-labelledby="modal-title"
         >
-          <button
-            className="absolute right-2 top-2 h-8 w-8 rounded-full border border-[#d8cab8] bg-white text-lg leading-none text-[#6d6157]"
-            type="button"
-            aria-label="Закрыть"
-            onClick={closeModal}
-          >
-            ×
-          </button>
+          <button className="modal-close" type="button" aria-label="Закрыть" onClick={closeModal}>×</button>
 
-          <p className="inline-flex rounded-full bg-[#eaf0ea] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#5f7465]">
-            Обратная связь
-          </p>
-          <h2 id="feedback-title" className={`${titleFont} mt-3 text-3xl`}>
-            Оставьте заявку
-          </h2>
-          <p className="mt-2 text-sm text-[#6d6157]">
-            Укажите имя, контакт и кратко ваш запрос — отвечу после записи.
-          </p>
+          <p className="section-label">Обратная связь</p>
+          <h2 id="modal-title" className="modal-h2">Оставьте заявку</h2>
+          <p className="modal-sub">Укажите имя, контакт и кратко ваш запрос — отвечу после записи.</p>
 
-          <form className="mt-4 grid gap-3" onSubmit={handleSubmit} noValidate>
-            <label className="grid gap-1 text-sm text-[#6d6157]">
-              Имя
-              <input
-                ref={nameInputRef}
-                type="text"
-                name="name"
-                required
-                placeholder="Ваше имя"
-                className="w-full rounded-xl border border-[#d8cab8] bg-white px-3 py-2 text-[#241f1a] outline-none ring-[#5f746559] transition focus:ring-2"
-              />
-            </label>
-
-            <label className="grid gap-1 text-sm text-[#6d6157]">
-              Контакт
-              <input
-                type="text"
-                name="contact"
-                required
-                placeholder="Телефон или @username"
-                className="w-full rounded-xl border border-[#d8cab8] bg-white px-3 py-2 text-[#241f1a] outline-none ring-[#5f746559] transition focus:ring-2"
-              />
-            </label>
-
-            <label className="grid gap-1 text-sm text-[#6d6157]">
-              Сообщение
-              <textarea
-                name="message"
-                rows="4"
-                required
-                placeholder="Коротко опишите запрос"
-                className="w-full rounded-xl border border-[#d8cab8] bg-white px-3 py-2 text-[#241f1a] outline-none ring-[#5f746559] transition focus:ring-2"
-              ></textarea>
-            </label>
-
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="form-group">
+              <label className="form-label" htmlFor="f-name">Имя</label>
+              <input id="f-name" ref={nameInputRef} className="form-input" type="text" name="name" required placeholder="Ваше имя" />
+            </div>
+            <div className="form-group">
+              <label className="form-label" htmlFor="f-contact">Контакт</label>
+              <input id="f-contact" className="form-input" type="text" name="contact" required placeholder="Телефон или @username" />
+            </div>
+            <div className="form-group">
+              <label className="form-label" htmlFor="f-message">Сообщение</label>
+              <textarea id="f-message" className="form-input" name="message" rows="4" required placeholder="Коротко опишите запрос" />
+            </div>
             <button
-              className="mt-1 w-max rounded-full bg-[#bb6c45] px-5 py-2.5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(187,108,69,0.36)] transition hover:-translate-y-0.5 hover:bg-[#a45c39] disabled:cursor-default disabled:opacity-70 disabled:shadow-none disabled:hover:translate-y-0"
+              className="btn-primary"
               type="submit"
               disabled={isSubmitting}
+              style={{marginTop:20, opacity: isSubmitting ? .65 : 1}}
             >
-              {isSubmitting ? "Отправляем..." : "Отправить"}
+              {isSubmitting ? "Отправляем…" : "Отправить заявку"}
             </button>
           </form>
         </div>
       </div>
-    </div>
+    </>
   );
 }
