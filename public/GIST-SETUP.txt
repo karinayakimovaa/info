@@ -1,0 +1,20 @@
+Стоимость с сайта через GitHub Gist (без правок React-кода)
+
+1) gist.github.com → создать публичный gist, файл назвать: site-content.json
+   Содержимое — как в public/site-content.json (поля minimumSessionPriceRub и pricingNote).
+
+2) В адресной строке gist URL видно 32 символа после имени, например:
+   gist.github.com/karinayakimovaa/abc123def456...  ← это gistId
+
+3) В репозитории открыть public/gist-config.json и указать:
+   "gistId": "вставьте_32_символа"
+   "owner": ваш логин GitHub (уже karinayakimovaa, если так)
+   "enabled": true   ← включить после того, как gistId заполнен
+
+4) Закоммитить gist-config.json и задеплоить один раз.
+
+Дальше меняете только gist (карандаш на gist.github.com) — сайт подтянет JSON при загрузке (кэш сбрасывается).
+
+Если gistId пустой или неверный — используется файл public/site-content.json на сайте.
+
+Опционально: переменная VITE_SITE_CONTENT_URL (сырой URL на JSON) перекрывает gist и локальный файл.

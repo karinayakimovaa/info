@@ -51,6 +51,45 @@ const telegramUsername = String(import.meta.env.VITE_TELEGRAM_USERNAME || "")
   .trim()
   .replace(/^@+/, "");
 
+/** Цена и текст: 1) Gist (см. public/gist-config.json) 2) public/site-content.json 3) запас ниже */
+const DEFAULT_SITE_CONTENT = {
+  minimumSessionPriceRub: 1200,
+  pricingNote:
+    "Фиксированной стоимости нет — сколько желаете и можете. Оплата до начала сессии на карту по номеру телефона или номеру карты.",
+};
+
+function formatRub(amount) {
+  const n = Number(amount);
+  if (!Number.isFinite(n) || n <= 0) return null;
+  return `${new Intl.NumberFormat("ru-RU").format(Math.round(n))}\u00a0₽`;
+}
+
+function mergeSiteContent(raw) {
+  const out = { ...DEFAULT_SITE_CONTENT };
+  if (!raw || typeof raw !== "object") return out;
+  const price = raw.minimumSessionPriceRub;
+  if (typeof price === "number" && Number.isFinite(price) && price > 0) {
+    out.minimumSessionPriceRub = Math.round(price);
+  }
+  if (typeof raw.pricingNote === "string" && raw.pricingNote.trim()) {
+    out.pricingNote = raw.pricingNote.trim();
+  }
+  return out;
+}
+
+/** Собрать raw URL Gist (owner + 32-символьный id из адреса gist) */
+function gistRawUrlFromConfig(cfg) {
+  if (!cfg || cfg.enabled !== true) return null;
+  const owner = String(cfg.owner || "").trim();
+  const gistId = String(cfg.gistId || "").trim();
+  const filename =
+    String(cfg.filename || "site-content.json").trim() || "site-content.json";
+  if (!owner || !gistId) return null;
+  if (!/^[a-f0-9]{32}$/i.test(gistId)) return null;
+  const file = encodeURIComponent(filename);
+  return `https://gist.githubusercontent.com/${owner}/${gistId}/raw/${file}`;
+}
+
 /* ─── tiny hook: fade-in on scroll ─── */
 function useFadeIn() {
   useEffect(() => {
@@ -74,12 +113,67 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [siteContent, setSiteContent] = useState(() => ({ ...DEFAULT_SITE_CONTENT }));
 
   const nameInputRef = useRef(null);
   const closeTimerRef = useRef(null);
   const headerRef = useRef(null);
 
   useFadeIn();
+
+  useEffect(() => {
+    let cancelled = false;
+    const remoteEnv = String(import.meta.env.VITE_SITE_CONTENT_URL || "").trim();
+    const localUrl = asset("site-content.json");
+
+    const loadJson = (url, bust) => {
+      const u = bust
+        ? `${url}${url.includes("?") ? "&" : "?"}_=${Date.now()}`
+        : url;
+      return fetch(u, { cache: "no-store", mode: "cors" }).then((r) => {
+        if (!r.ok) throw new Error(String(r.status));
+        return r.json();
+      });
+    };
+
+    const apply = (raw) => {
+      if (!cancelled) setSiteContent(mergeSiteContent(raw));
+    };
+    const useDefaults = () => {
+      if (!cancelled) setSiteContent({ ...DEFAULT_SITE_CONTENT });
+    };
+
+    (async () => {
+      try {
+        if (remoteEnv) {
+          apply(await loadJson(remoteEnv, true));
+          return;
+        }
+        let gistUrl = null;
+        try {
+          const cfg = await loadJson(asset("gist-config.json"), false);
+          gistUrl = gistRawUrlFromConfig(cfg);
+        } catch {
+          /* нет gist-config — ок */
+        }
+        if (gistUrl) {
+          try {
+            apply(await loadJson(gistUrl, true));
+            return;
+          } catch {
+            /* Gist недоступен — пробуем локальный файл */
+          }
+        }
+        apply(await loadJson(localUrl, false));
+      } catch {
+        useDefaults();
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const closeModal = useCallback(() => setIsModalOpen(false), []);
   const openModal = () => setIsModalOpen(true);
@@ -785,11 +879,10 @@ export default function App() {
             <div className="pricing-inner">
               <div className="pricing-card" data-fade data-delay="1">
                 <p className="pricing-label">Минимальная сумма</p>
-                <p className="pricing-amount">1 200 ₽</p>
-                <p className="pricing-note">
-                  Фиксированной стоимости нет — сколько желаете и можете.
-                  Оплата до начала сессии на карту по номеру телефона или номеру карты.
+                <p className="pricing-amount">
+                  {formatRub(siteContent.minimumSessionPriceRub) ?? "—"}
                 </p>
+                <p className="pricing-note">{siteContent.pricingNote}</p>
               </div>
               <div className="pricing-card" data-fade data-delay="2" style={{background:"linear-gradient(150deg,#f3ebe0,#ede4d5)"}}>
                 <p className="pricing-label">Реквизиты</p>
