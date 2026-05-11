@@ -610,7 +610,7 @@ export default function App() {
       <header className="site-header" ref={headerRef}>
         <a href="#" className="logo-wordmark" aria-label="Карина Якимова — главная">
           КАРИНА ЯКИМОВА
-          <span className="logo-sub">Практикующий психолог · онлайн</span>
+          <span className="logo-sub animate-pulse ">Практикующий психолог · онлайн</span>
         </a>
 
         <nav className="header-nav" aria-label="Основная навигация">
