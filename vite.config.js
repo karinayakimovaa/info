@@ -8,8 +8,8 @@ export default defineConfig(({ mode }) => {
   const isProd = mode === 'production'
 
   return {
-    // GitHub Pages project site path: https://<user>.github.io/info/
-    base: isProd ? '/info/' : '/',
+    // Relative asset paths are more robust on GitHub Pages/custom domains.
+    base: isProd ? './' : '/',
     plugins: [react(), tailwindcss()],
     server: {
       proxy: {
