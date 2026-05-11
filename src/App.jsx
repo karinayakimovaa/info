@@ -7,7 +7,7 @@ const services = [
   "Краткое описание услуги.",
 ];
 
-const steps = ["Первичный контакт.", "Старт работы и цели.", "Регулярные встречи."];
+const steps = ["text", "text", "text"];
 
 const reviews = ["Короткая цитата клиента.", "Еще одна короткая цитата."];
 
@@ -273,15 +273,15 @@ export default function App() {
             <section className="grid gap-4 md:grid-cols-[1.2fr_0.8fr]">
               <div className="rounded-[26px] border border-[#d8cab8f2] bg-[#fffdf8] p-5 md:p-9">
                 <p className="inline-flex rounded-full bg-[#eaf0ea] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#5f7465]">
-                  Шаблон практики
+                  text
                 </p>
                 <h1
                   className={`${titleFont} mt-4 text-4xl leading-[1.04] md:text-6xl`}
                 >
-                  Пространство для изменений
+                  text
                 </h1>
                 <p className="mt-4 max-w-[46ch] text-[15px] leading-7 text-[#6d6157] md:text-base">
-                  Короткий текст о вашем подходе.
+                  text
                 </p>
 
                 <div className="mt-6 flex flex-wrap items-center gap-4">
@@ -318,16 +318,16 @@ export default function App() {
                   Фото
                 </div>
                 <p className="inline-flex rounded-full bg-[#eaf0ea] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#5f7465]">
-                  О практике
+                  text
                 </p>
                 <h2 className={`${titleFont} mt-4 text-3xl leading-tight`}>
                   Коротко о вас
                 </h2>
                 <p className="mt-3 text-[15px] leading-7 text-[#6d6157] md:text-base">
-                  Пара фраз о вашем опыте и формате работы.
+                  text
                 </p>
                 <p className={`${titleFont} mt-6 text-3xl text-[#bb6c45]`}>
-                  Ваша подпись
+                  text
                 </p>
               </aside>
             </section>
@@ -338,7 +338,9 @@ export default function App() {
               <p className="inline-flex rounded-full bg-[#eaf0ea] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#5f7465]">
                 Фото
               </p>
-              <h2 className={`${titleFont} mt-3 text-3xl leading-tight md:text-5xl`}>
+              <h2
+                className={`${titleFont} mt-3 text-3xl leading-tight md:text-5xl`}
+              >
                 Места для изображений
               </h2>
             </div>
