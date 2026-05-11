@@ -112,7 +112,7 @@ export default function App() {
       const target = document.querySelector(href);
       if (!target) return;
       e.preventDefault();
-      const offset = headerRef.current?.offsetHeight ?? 72;
+      const offset = headerRef.current?.offsetHeight ?? 120;
       window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - offset, behavior: "smooth" });
       setIsMenuOpen(false);
     };
@@ -204,29 +204,29 @@ export default function App() {
           border-bottom: 1px solid rgba(180,156,130,.28);
           padding: 0 40px;
           display: flex; align-items: center; justify-content: space-between;
-          height: 68px;
+          height: 118px;
         }
-        @media(max-width:767px){.site-header{padding:0 18px;height:58px;}}
+        @media(max-width:767px){.site-header{padding:0 18px;height:98px;}}
 
-        .logo-wordmark {
-          font-family: 'Cormorant Garamond', serif;
-          font-weight: 500;
-          font-size: 18px;
-          letter-spacing: .22em;
-          color: var(--bark);
-          text-transform: uppercase;
+        .logo-link {
+          display: flex;
+          align-items: center;
+          min-width: 0;
+          margin-right: 8px;
+          line-height: 0;
           text-decoration: none;
-          line-height: 1.2;
         }
-        .logo-sub {
+        .header-logo {
+          height: 90px;
+          width: auto;
+          max-width: min(100%, 720px);
           display: block;
-          font-family: 'DM Sans', sans-serif;
-          font-size: 9px;
-          font-weight: 400;
-          letter-spacing: .28em;
-          color: var(--sub);
-          text-transform: uppercase;
-          margin-top: 2px;
+        }
+        @media (max-width: 767px) {
+          .header-logo {
+            height: 64px;
+            max-width: calc(100vw - 92px);
+          }
         }
 
         .header-nav { display: flex; gap: 36px; }
@@ -608,9 +608,15 @@ export default function App() {
 
       {/* ── HEADER ── */}
       <header className="site-header" ref={headerRef}>
-        <a href="#" className="logo-wordmark" aria-label="Карина Якимова — главная">
-          КАРИНА ЯКИМОВА
-          <span className="logo-sub animate-pulse ">Практикующий психолог · онлайн</span>
+        <a href="#" className="logo-link" aria-label="Карина Якимова — главная">
+          <img
+            className="header-logo"
+            src={asset("logo.svg")}
+            width="682"
+            height="182"
+            alt=""
+            decoding="async"
+          />
         </a>
 
         <nav className="header-nav" aria-label="Основная навигация">
@@ -651,7 +657,7 @@ export default function App() {
       {/* ── HERO ── */}
       <main>
         <div className="site-wrap">
-          <section id="about" className="hero" style={{scrollMarginTop:72}}>
+          <section id="about" className="hero" style={{scrollMarginTop:124}}>
             <div data-fade>
               <p className="hero-tag">Практикующий психолог</p>
               <h1 className="hero-h1">
@@ -713,7 +719,7 @@ export default function App() {
 
         {/* ── SERVICES ── */}
         <div className="site-wrap">
-          <section id="services" className="services-section" style={{scrollMarginTop:72}}>
+          <section id="services" className="services-section" style={{scrollMarginTop:124}}>
             <div data-fade>
               <p className="section-label">Услуги</p>
               <h2 className="section-h2">С чем <em>я работаю</em></h2>
@@ -732,7 +738,7 @@ export default function App() {
 
         {/* ── PROCESS ── */}
         <div className="site-wrap">
-          <section id="process" className="process-section" style={{scrollMarginTop:72}}>
+          <section id="process" className="process-section" style={{scrollMarginTop:124}}>
             <div data-fade>
               <p className="section-label">Процесс</p>
               <h2 className="section-h2">Как мы будем <em>работать</em></h2>
@@ -771,7 +777,7 @@ export default function App() {
 
         {/* ── PRICING ── */}
         <div className="site-wrap">
-          <section id="pricing" className="pricing-section" style={{scrollMarginTop:72}}>
+          <section id="pricing" className="pricing-section" style={{scrollMarginTop:124}}>
             <div data-fade>
               <p className="section-label">Оплата</p>
               <h2 className="section-h2">Стоимость и <em>оплата</em></h2>
@@ -799,7 +805,7 @@ export default function App() {
 
         {/* ── CONTACTS ── */}
         <div className="site-wrap">
-          <section id="contacts" className="contacts-section" style={{scrollMarginTop:72}}>
+          <section id="contacts" className="contacts-section" style={{scrollMarginTop:124}}>
             <div className="contacts-inner" data-fade>
               <div>
                 <p className="section-label" style={{color:"rgba(250,246,240,.4)"}}>Контакты</p>
