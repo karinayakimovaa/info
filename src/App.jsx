@@ -135,7 +135,6 @@ export default function App() {
       `Имя: ${payload.name}`,
       `Контакт: ${payload.contact}`,
       `Сообщение: ${payload.message}`,
-      `Страница: ${payload.page}`,
     ].join("\n");
   
     try {
