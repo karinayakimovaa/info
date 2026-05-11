@@ -211,7 +211,7 @@ export default function App() {
             <a
               href="#"
               className="flex items-center"
-              aria-label="Karina Yakimova — главная"
+              aria-label="Карина Якимова — главная"
             >
               <svg
                 width="520"
@@ -239,17 +239,17 @@ export default function App() {
                   strokeDasharray="2 4"
                 />
                 <text className="ky-mfill" x="40" y="40" textAnchor="middle">
-                  K
+                  К
                 </text>
                 <text className="ky-mono" x="40" y="40" textAnchor="middle">
-                  K
+                  К
                 </text>
                 <circle cx="40" cy="3" r="2.2" fill="#7a3e1e" />
                 <line className="ky-div" x1="84" y1="14" x2="84" y2="66" />
                 <text className="ky-name" x="98" y="36">
-                  KARINA YAKIMOVA
+                  КАРИНА ЯКИМОВА
                 </text>
-                <line className="ky-line" x1="98" y1="48" x2="338" y2="48" />
+                <line className="ky-line" x1="98" y1="48" x2="360" y2="48" />
                 <text className="ky-sub" x="98" y="62">
                   ПРАКТИКУЮЩИЙ ПСИХОЛОГ · ОНЛАЙН
                 </text>
