@@ -3,10 +3,12 @@ import ReactDOM from 'react-dom/client'
 import { Toaster } from 'react-hot-toast'
 import App from './App.jsx'
 import './style.css'
+import { Analytics } from '@vercel/analytics/next';
 
 ReactDOM.createRoot(document.getElementById('app')).render(
   <React.StrictMode>
     <App />
+    <Analytics />
     <Toaster
       position="top-right"
       toastOptions={{
