@@ -207,10 +207,10 @@ export default function App() {
           ref={headerRef}
           className="sticky top-0 z-40 border-b border-[#d8cab8cc] bg-[#fffaf4eb] px-3 py-2 backdrop-blur md:px-8 md:py-0"
         >
-          <div className="flex items-center justify-between gap-3 md:gap-6">
+          <div className="flex min-w-0 items-center justify-between gap-2 sm:gap-3 md:gap-6">
             <a
               href="#"
-              className="flex items-center"
+              className="flex min-w-0 flex-1 items-center overflow-hidden pr-1 md:flex-none md:overflow-visible md:pr-0"
               aria-label="Карина Якимова — главная"
             >
               <svg
@@ -220,7 +220,8 @@ export default function App() {
                 xmlns="http://www.w3.org/2000/svg"
                 role="img"
                 aria-hidden="true"
-                className="h-20 w-auto md:h-[120px]"
+                preserveAspectRatio="xMinYMid meet"
+                className="h-12 w-auto max-w-full shrink md:h-[120px]"
               >
                 <style>{`
                   .ky-name { font-family: 'Cormorant Garamond', Cormorant, Georgia, serif; font-size: 22px; font-weight: 600; letter-spacing: 0.16em; fill: #2c1a0e; }
@@ -284,11 +285,11 @@ export default function App() {
 
             <button
               type="button"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#d8cab8] text-[#5f7465] md:hidden"
+              className="inline-flex h-11 min-h-[44px] w-11 min-w-[44px] shrink-0 items-center justify-center rounded-full border border-[#b89a82] bg-[#fffdf8] text-xl leading-none text-[#2c241c] shadow-sm md:hidden"
               aria-label={isMenuOpen ? "Закрыть меню" : "Открыть меню"}
               onClick={() => setIsMenuOpen((value) => !value)}
             >
-              <span className="text-xl leading-none">
+              <span aria-hidden="true" className="block translate-y-px">
                 {isMenuOpen ? "×" : "≡"}
               </span>
             </button>
