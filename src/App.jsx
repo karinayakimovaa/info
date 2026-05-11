@@ -1,20 +1,44 @@
 ﻿import { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 
+const phoneDisplay = "+7 (952) 330-74-96";
+const phoneTel = "+79523307496";
+
 const services = [
-  "Краткое описание услуги.",
-  "Краткое описание услуги.",
-  "Краткое описание услуги.",
+  {
+    title: "Поиск себя и своего пути",
+    description:
+      "Когда сложно понять, чего вы хотите, и куда двигаться дальше.",
+  },
+  {
+    title: "Самооценка и принятие себя",
+    description:
+      "Опора во внутреннем диалоге: меньше самокритики, больше поддержки к себе.",
+  },
+  {
+    title: "Повседневные трудности, тревога и стресс",
+    description:
+      "Разбираем перегрузку, тревожные сценарии и то, что мешает жить спокойнее.",
+  },
+  {
+    title: "Конфликты в общении и отношениях",
+    description:
+      "Понятнее про границы, ожидания и то, как говорить и слышать друг друга.",
+  },
 ];
 
-const steps = ["text", "text", "text"];
-
-const reviews = ["Короткая цитата клиента.", "Еще одна короткая цитата."];
+const steps = [
+  "Онлайн на платформе Яндекс Телемост: подключиться просто, формат конфиденциальный, приложение устанавливать не нужно.",
+  "Первым делом напишите ваш примерный запрос — обсудим, смогу ли я вам помочь и подходит ли вам такая работа.",
+  "Возможна разовая консультация или продолжительная терапия — темп и глубину выбираем вместе.",
+];
 
 const titleFont = "[font-family:'Cormorant_Garamond',serif]";
 const telegramUsername = String(import.meta.env.VITE_TELEGRAM_USERNAME || "")
   .trim()
   .replace(/^@+/, "");
+
+const asset = (path) => `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
 
 export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -227,7 +251,7 @@ export default function App() {
                 </text>
                 <line className="ky-line" x1="98" y1="48" x2="338" y2="48" />
                 <text className="ky-sub" x="98" y="62">
-                  ПСИХОЛОГ · КОУЧ
+                  ПРАКТИКУЮЩИЙ ПСИХОЛОГ · ОНЛАЙН
                 </text>
               </svg>
             </a>
@@ -241,6 +265,9 @@ export default function App() {
               </a>
               <a className="transition hover:text-[#241f1a]" href="#process">
                 Формат работы
+              </a>
+              <a className="transition hover:text-[#241f1a]" href="#pricing">
+                Стоимость
               </a>
               <a className="transition hover:text-[#241f1a]" href="#contacts">
                 Контакты
@@ -278,6 +305,9 @@ export default function App() {
               <a className="transition hover:text-[#241f1a]" href="#process">
                 Формат работы
               </a>
+              <a className="transition hover:text-[#241f1a]" href="#pricing">
+                Стоимость
+              </a>
               <a className="transition hover:text-[#241f1a]" href="#contacts">
                 Контакты
               </a>
@@ -297,15 +327,17 @@ export default function App() {
             <section className="grid gap-4 md:grid-cols-[1.2fr_0.8fr]">
               <div className="rounded-[26px] border border-[#d8cab8f2] bg-[#fffdf8] p-5 md:p-9">
                 <p className="inline-flex rounded-full bg-[#eaf0ea] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#5f7465]">
-                  text
+                  Практикующий психолог · онлайн
                 </p>
                 <h1
                   className={`${titleFont} mt-4 text-4xl leading-[1.04] md:text-6xl`}
                 >
-                  text
+                  Карина Якимова
                 </h1>
                 <p className="mt-4 max-w-[46ch] text-[15px] leading-7 text-[#6d6157] md:text-base">
-                  text
+                  Помогаю справляться с повседневными трудностями, находить опору
+                  и понимать себя. Студентка 4 курса по направлению «Кризисная
+                  психология и медиация в образовании».
                 </p>
 
                 <div className="mt-6 flex flex-wrap items-center gap-4">
@@ -326,32 +358,37 @@ export default function App() {
 
                 <ul className="mt-5 flex flex-wrap gap-2">
                   <li className="rounded-full border border-dashed border-[#d8cab8] bg-[#fffaf4] px-3 py-1.5 text-sm text-[#6d6157]">
-                    Онлайн и очно
+                    Яндекс Телемост
                   </li>
                   <li className="rounded-full border border-dashed border-[#d8cab8] bg-[#fffaf4] px-3 py-1.5 text-sm text-[#6d6157]">
-                    Индивидуальные сессии
+                    Индивидуально
                   </li>
                   <li className="rounded-full border border-dashed border-[#d8cab8] bg-[#fffaf4] px-3 py-1.5 text-sm text-[#6d6157]">
-                    Гибкий график
+                    Разово или длительно
                   </li>
                 </ul>
               </div>
 
               <aside className="rounded-[26px] border border-[#d8cab8f2] bg-[linear-gradient(165deg,#fff6ec,#fffdf8)] p-5 md:p-8">
-                <div className="mb-4 grid h-48 place-items-center rounded-2xl border border-dashed border-[#c8b29c] bg-[#fff7ef] text-sm font-semibold text-[#9a6f56] md:h-56">
-                  Фото
+                <div className="mb-4 overflow-hidden rounded-2xl border border-[#c8b29c] md:h-56">
+                  <img
+                    src={asset("photos/yoga-sunrise.png")}
+                    alt=""
+                    className="h-48 w-full object-cover md:h-56"
+                  />
                 </div>
                 <p className="inline-flex rounded-full bg-[#eaf0ea] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#5f7465]">
-                  text
+                  Обо мне
                 </p>
                 <h2 className={`${titleFont} mt-4 text-3xl leading-tight`}>
-                  Коротко о вас
+                  Бережное сопровождение
                 </h2>
                 <p className="mt-3 text-[15px] leading-7 text-[#6d6157] md:text-base">
-                  text
+                  Рядом на темах поиска себя, самооценки, стресса и отношений —
+                  в том темпе, который вам сейчас доступен.
                 </p>
                 <p className={`${titleFont} mt-6 text-3xl text-[#bb6c45]`}>
-                  text
+                  Опора и ясность шаг за шагом
                 </p>
               </aside>
             </section>
@@ -360,23 +397,35 @@ export default function App() {
           <section className="mt-6">
             <div className="px-1 pb-3">
               <p className="inline-flex rounded-full bg-[#eaf0ea] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#5f7465]">
-                Фото
+                Настроение
               </p>
               <h2
                 className={`${titleFont} mt-3 text-3xl leading-tight md:text-5xl`}
               >
-                Места для изображений
+                Пространство для себя
               </h2>
             </div>
             <div className="grid gap-4 md:grid-cols-3">
-              <div className="grid h-44 place-items-center rounded-[26px] border border-dashed border-[#c8b29c] bg-[#fff7ef] text-sm font-semibold text-[#9a6f56] md:h-52">
-                Фото 
+              <div className="overflow-hidden rounded-[26px] border border-[#d8cab8f2] md:h-52">
+                <img
+                  src={asset("photos/meadow.png")}
+                  alt=""
+                  className="h-44 w-full object-cover md:h-52"
+                />
               </div>
-              <div className="grid h-44 place-items-center rounded-[26px] border border-dashed border-[#c8b29c] bg-[#fff7ef] text-sm font-semibold text-[#9a6f56] md:h-52">
-                Фото 
+              <div className="overflow-hidden rounded-[26px] border border-[#d8cab8f2] md:h-52">
+                <img
+                  src={asset("photos/lake-quote.png")}
+                  alt=""
+                  className="h-44 w-full object-cover md:h-52"
+                />
               </div>
-              <div className="grid h-44 place-items-center rounded-[26px] border border-dashed border-[#c8b29c] bg-[#fff7ef] text-sm font-semibold text-[#9a6f56] md:h-52">
-                Фото
+              <div className="overflow-hidden rounded-[26px] border border-[#d8cab8f2] md:h-52">
+                <img
+                  src={asset("photos/yoga-sunrise.png")}
+                  alt=""
+                  className="h-44 w-full object-cover md:h-52"
+                />
               </div>
             </div>
           </section>
@@ -390,22 +439,22 @@ export default function App() {
                 <h2
                   className={`${titleFont} mt-3 text-3xl leading-tight md:text-5xl`}
                 >
-                  С чем вы помогаете
+                  С чем я работаю
                 </h2>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                 {services.map((item, index) => (
                   <article
-                    key={index}
+                    key={item.title}
                     className="rounded-[26px] border border-[#d8cab8f2] bg-[#fffdf8] p-5"
                   >
                     <span className="mb-4 inline-block h-[18px] w-[18px] rounded-full bg-[linear-gradient(145deg,#e4b095,#bb6c45)]" />
                     <h3 className={`${titleFont} text-2xl`}>
-                      Услуга 0{index + 1}
+                      {index + 1}. {item.title}
                     </h3>
                     <p className="mt-2 text-[15px] leading-7 text-[#6d6157] md:text-base">
-                      {item}
+                      {item.description}
                     </p>
                   </article>
                 ))}
@@ -422,7 +471,7 @@ export default function App() {
                 <h2
                   className={`${titleFont} mt-3 text-3xl leading-tight md:text-5xl`}
                 >
-                  Как проходит работа
+                  Как мы будем работать
                 </h2>
               </div>
 
@@ -445,36 +494,50 @@ export default function App() {
           <section className="mt-6">
             <div className="px-1 pb-3">
               <p className="inline-flex rounded-full bg-[#eaf0ea] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#5f7465]">
-                Отзывы
+                Доверие
               </p>
               <h2
                 className={`${titleFont} mt-3 text-3xl leading-tight md:text-5xl`}
               >
-                Что говорят клиенты
+                Важно для доверия
               </h2>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              {reviews.map((review, index) => (
-                <figure
-                  key={index}
-                  className="m-0 rounded-[26px] border border-[#d8cab8f2] bg-[#fffdf8] p-5"
-                >
-                  <div className="mb-4 grid h-20 w-20 place-items-center rounded-2xl border border-dashed border-[#c8b29c] bg-[#fff7ef] text-xs font-semibold text-[#9a6f56]">
-                    Фото
-                  </div>
-                  <blockquote
-                    className={`${titleFont} text-[30px] leading-tight`}
-                  >
-                    &quot;{review}&quot;
-                  </blockquote>
-                  <figcaption className="mt-4 text-sm text-[#6d6157]">
-                    Имя клиента, контекст
-                  </figcaption>
-                </figure>
-              ))}
+            <div className="rounded-[26px] border border-[#d8cab8f2] bg-[#fffdf8] p-6 md:p-8">
+              <p className="m-0 max-w-[62ch] text-[15px] leading-7 text-[#6d6157] md:text-base">
+                Я сама регулярно прохожу личную терапию и работаю с
+                супервизором — это моя профессиональная этика и залог качества
+                вашей поддержки.
+              </p>
             </div>
           </section>
+
+          <div id="pricing" className="mt-6 scroll-mt-28">
+            <section>
+              <div className="px-1 pb-3">
+                <p className="inline-flex rounded-full bg-[#eaf0ea] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#5f7465]">
+                  Оплата
+                </p>
+                <h2
+                  className={`${titleFont} mt-3 text-3xl leading-tight md:text-5xl`}
+                >
+                  Стоимость и оплата
+                </h2>
+              </div>
+
+              <div className="rounded-[26px] border border-[#d8cab8f2] bg-[#fffdf8] p-6 md:p-8">
+                <p className="m-0 max-w-[62ch] text-[15px] leading-7 text-[#6d6157] md:text-base">
+                  Оплата принимается до начала сессии на карту по номеру телефона
+                  или номеру карты. Реквизиты пришлю после записи.
+                </p>
+                <p className="mt-4 max-w-[62ch] text-[15px] leading-7 text-[#6d6157] md:text-base">
+                  Фиксированной стоимости нет — сколько желаете и можете;
+                  минимальная сумма за сессию —{" "}
+                  <span className="font-semibold text-[#241f1a]">1200 ₽</span>.
+                </p>
+              </div>
+            </section>
+          </div>
         </main>
 
         <div id="contacts" className="scroll-mt-28">
@@ -483,23 +546,46 @@ export default function App() {
               Контакты
             </p>
             <h2 className={`${titleFont} text-3xl leading-tight md:text-4xl`}>
-              Готовы записаться?
+              Записаться или задать вопрос
             </h2>
             <p className="text-[15px] leading-7 text-[#6d6157] md:text-base">
-              Укажите контакты и условия работы.
+              Напишите примерный запрос — обсудим формат и сможем ли мы
+              поработать вместе. Также можно оставить заявку через форму ниже.
             </p>
-            <button
-              className="w-max rounded-full bg-[#bb6c45] px-5 py-2.5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(187,108,69,0.36)] transition hover:-translate-y-0.5 hover:bg-[#a45c39]"
-              type="button"
-              onClick={openModal}
-            >
-              Оставить заявку
-            </button>
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+              <a
+                className="w-max rounded-full bg-[#bb6c45] px-5 py-2.5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(187,108,69,0.36)] transition hover:-translate-y-0.5 hover:bg-[#a45c39]"
+                href={`tel:${phoneTel}`}
+              >
+                Позвонить {phoneDisplay}
+              </a>
+              {telegramUsername ? (
+                <a
+                  className="text-sm font-bold text-[#5f7465] underline-offset-4 hover:underline"
+                  href={`https://t.me/${telegramUsername}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Telegram @{telegramUsername}
+                </a>
+              ) : (
+                <span className="text-sm font-semibold text-[#5f7465]">
+                  Telegram — можно написать по этому же номеру.
+                </span>
+              )}
+              <button
+                className="w-max rounded-full border border-[#bb6c45] bg-transparent px-5 py-2.5 text-sm font-bold text-[#bb6c45] transition hover:bg-[#bb6c4514]"
+                type="button"
+                onClick={openModal}
+              >
+                Оставить заявку
+              </button>
+            </div>
           </section>
         </div>
 
         <footer className="relative z-10 flex flex-col gap-1 px-4 py-5 text-sm text-[#6d6157] md:flex-row md:justify-between md:px-8 md:py-7">
-          <p>Имя, психолог</p>
+          <p>Карина Якимова · практикующий психолог · онлайн</p>
         </footer>
       </div>
 
@@ -537,7 +623,9 @@ export default function App() {
           <h2 id="feedback-title" className={`${titleFont} mt-3 text-3xl`}>
             Оставьте заявку
           </h2>
-          <p className="mt-2 text-sm text-[#6d6157]">Заполните поля</p>
+          <p className="mt-2 text-sm text-[#6d6157]">
+            Укажите имя, контакт и кратко ваш запрос — отвечу после записи.
+          </p>
 
           <form className="mt-4 grid gap-3" onSubmit={handleSubmit} noValidate>
             <label className="grid gap-1 text-sm text-[#6d6157]">
