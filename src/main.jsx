@@ -4,11 +4,13 @@ import { Toaster } from 'react-hot-toast'
 import App from './App.jsx'
 import './style.css'
 import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 ReactDOM.createRoot(document.getElementById('app')).render(
   <React.StrictMode>
     <App />
     <Analytics />
+    <SpeedInsights />
     <Toaster
       position="top-right"
       toastOptions={{
