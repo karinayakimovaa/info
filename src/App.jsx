@@ -102,7 +102,7 @@ function useFadeIn() {
             io.unobserve(e.target);
           }
         }),
-      { threshold: 0.12 }
+      { threshold: 0.12 },
     );
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
@@ -113,7 +113,9 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [siteContent, setSiteContent] = useState(() => ({ ...DEFAULT_SITE_CONTENT }));
+  const [siteContent, setSiteContent] = useState(() => ({
+    ...DEFAULT_SITE_CONTENT,
+  }));
 
   const nameInputRef = useRef(null);
   const closeTimerRef = useRef(null);
@@ -123,7 +125,9 @@ export default function App() {
 
   useEffect(() => {
     let cancelled = false;
-    const remoteEnv = String(import.meta.env.VITE_SITE_CONTENT_URL || "").trim();
+    const remoteEnv = String(
+      import.meta.env.VITE_SITE_CONTENT_URL || "",
+    ).trim();
     const localUrl = asset("site-content.json");
 
     const loadJson = (url, bust) => {
@@ -196,7 +200,10 @@ export default function App() {
   useEffect(() => {
     document.documentElement.classList.add("scroll-smooth");
     const onKey = (e) => {
-      if (e.key === "Escape") { closeModal(); setIsMenuOpen(false); }
+      if (e.key === "Escape") {
+        closeModal();
+        setIsMenuOpen(false);
+      }
     };
     const onAnchor = (e) => {
       const a = e.target.closest('a[href^="#"]');
@@ -207,7 +214,10 @@ export default function App() {
       if (!target) return;
       e.preventDefault();
       const offset = headerRef.current?.offsetHeight ?? 120;
-      window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - offset, behavior: "smooth" });
+      window.scrollTo({
+        top: target.getBoundingClientRect().top + window.scrollY - offset,
+        behavior: "smooth",
+      });
       setIsMenuOpen(false);
     };
     document.addEventListener("keydown", onKey);
@@ -230,17 +240,26 @@ export default function App() {
     const contact = String(fd.get("contact") || "").trim();
     const message = String(fd.get("message") || "").trim();
 
-    if (!name || !contact || !message) { toast.error("Заполните все поля."); return; }
-    if (!botToken || !chatId) { toast.error("Telegram bot не настроен."); return; }
+    if (!name || !contact || !message) {
+      toast.error("Заполните все поля.");
+      return;
+    }
+    if (!botToken || !chatId) {
+      toast.error("Telegram bot не настроен.");
+      return;
+    }
 
     setIsSubmitting(true);
     const text = `Новая заявка\n\nИмя: ${name}\nКонтакт: ${contact}\nСообщение: ${message}`;
     try {
-      const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({ chat_id: chatId, text }),
-      });
+      const res = await fetch(
+        `https://api.telegram.org/bot${botToken}/sendMessage`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({ chat_id: chatId, text }),
+        },
+      );
       if (!res.ok) throw new Error();
       toast.success("Заявка отправлена");
       e.target.reset();
@@ -701,36 +720,41 @@ export default function App() {
       `}</style>
 
       {/* ── HEADER ── */}
-      <header className="site-header" ref={headerRef}>
-        <a href="#" className="logo-link" aria-label="Карина Якимова — главная">
+      <header className='site-header' ref={headerRef}>
+        <a href='#' className='logo-link' aria-label='Карина Якимова — главная'>
           <img
-            className="header-logo"
+            className='header-logo'
             src={asset("logo.svg")}
-            width="682"
-            height="182"
-            alt=""
-            decoding="async"
+            width='682'
+            height='182'
+            alt=''
+            decoding='async'
           />
         </a>
 
-        <nav className="header-nav" aria-label="Основная навигация">
-          <a href="#about">Обо мне</a>
-          <a href="#services">Услуги</a>
-          <a href="#process">Формат</a>
-          <a href="#pricing">Стоимость</a>
-          <a href="#contacts">Контакты</a>
+        <nav className='header-nav' aria-label='Основная навигация'>
+          <a href='#about'>Обо мне</a>
+          <a href='#services'>Услуги</a>
+          <a href='#process'>Формат</a>
+          <a href='#pricing'>Стоимость</a>
+          <a href='#contacts'>Контакты</a>
         </nav>
 
-        <button className="btn-primary header-cta" style={{display:"none"}} onClick={openModal} type="button">
+        <button
+          className='btn-primary header-cta'
+          style={{ display: "none" }}
+          onClick={openModal}
+          type='button'
+        >
           Записаться
         </button>
         <style>{`@media(min-width:901px){.header-cta{display:inline-flex!important;}}`}</style>
 
         <button
-          className="hamburger"
-          type="button"
+          className='hamburger'
+          type='button'
           aria-label={isMenuOpen ? "Закрыть меню" : "Открыть меню"}
-          onClick={() => setIsMenuOpen(v => !v)}
+          onClick={() => setIsMenuOpen((v) => !v)}
         >
           {isMenuOpen ? "×" : "≡"}
         </button>
@@ -738,55 +762,68 @@ export default function App() {
 
       {/* mobile nav */}
       <div className={`mobile-menu ${isMenuOpen ? "open" : ""}`}>
-        <a href="#about">Обо мне</a>
-        <a href="#services">Услуги</a>
-        <a href="#process">Формат работы</a>
-        <a href="#pricing">Стоимость</a>
-        <a href="#contacts">Контакты</a>
-        <button className="btn-primary" style={{width:"fit-content",marginTop:4}} type="button" onClick={openModal}>
+        <a href='#about'>Обо мне</a>
+        <a href='#services'>Услуги</a>
+        <a href='#process'>Формат работы</a>
+        <a href='#pricing'>Стоимость</a>
+        <a href='#contacts'>Контакты</a>
+        <button
+          className='btn-primary'
+          style={{ width: "fit-content", marginTop: 4 }}
+          type='button'
+          onClick={openModal}
+        >
           Записаться
         </button>
       </div>
 
       {/* ── HERO ── */}
       <main>
-        <div className="site-wrap">
-          <section id="about" className="hero" style={{scrollMarginTop:124}}>
+        <div className='site-wrap'>
+          <section id='about' className='hero' style={{ scrollMarginTop: 124 }}>
             <div data-fade>
-              <p className="hero-tag">Практикующий психолог</p>
-              <h1 className="hero-h1">
-                Опора и ясность —<br/>
+              <p className='hero-tag'>Практикующий психолог</p>
+              <h1 className='hero-h1'>
+                Опора и ясность —<br />
                 <em>шаг за шагом</em>
               </h1>
-              <p className="hero-desc">
+              <p className='hero-desc'>
                 Помогаю справляться с повседневными трудностями, находить опору
                 и понимать себя. Студентка 4 курса по направлению «Кризисная
                 психология и медиация в образовании».
               </p>
-              <div className="hero-actions">
-                <button className="btn-primary" type="button" onClick={openModal}>
+              <div className='hero-actions'>
+                <button
+                  className='btn-primary'
+                  type='button'
+                  onClick={openModal}
+                >
                   Записаться
                 </button>
-                <a className="hero-link" href="#services">Смотреть услуги</a>
+                <a className='hero-link' href='#services'>
+                  Смотреть услуги
+                </a>
               </div>
-              <ul className="hero-pills" style={{listStyle:"none"}}>
-                <li className="hero-pill">Яндекс Телемост</li>
-                <li className="hero-pill">Индивидуально</li>
-                <li className="hero-pill">Разово или длительно</li>
+              <ul className='hero-pills' style={{ listStyle: "none" }}>
+                <li className='hero-pill'>Яндекс Телемост</li>
+                <li className='hero-pill'>Индивидуально</li>
+                <li className='hero-pill'>Разово или длительно</li>
               </ul>
             </div>
 
-            <div data-fade data-delay="2">
-              <div className="hero-card">
+            <div data-fade data-delay='2'>
+              <div className='hero-card'>
                 <img
                   src={asset("photos/yoga-sunrise.png")}
-                  alt=""
-                  className="hero-card-img"
+                  alt=''
+                  className='hero-card-img'
                 />
-                <div className="hero-card-body">
-                  <p className="section-label">Бережное сопровождение</p>
-                  <p className="hero-card-quote">
-                    Рядом в том темпе,<br/>который вам доступен
+                <div className='hero-card-body'>
+                  <p className='section-label'>Бережное сопровождение</p>
+                  <p className='hero-card-quote'>
+                    Рядом в том темпе,
+                    <br />
+                    который вам доступен
                   </p>
                 </div>
               </div>
@@ -795,16 +832,22 @@ export default function App() {
         </div>
 
         {/* ── MOOD ── */}
-        <div className="site-wrap">
-          <section className="mood-strip">
+        <div className='site-wrap'>
+          <section className='mood-strip'>
             <div data-fade>
-              <p className="section-label">Настроение</p>
-              <h2 className="section-h2">Пространство <em>для себя</em></h2>
+              <p className='section-label'>Настроение</p>
+              <h2 className='section-h2'>
+                Пространство <em>для себя</em>
+              </h2>
             </div>
-            <div className="mood-grid">
-              {["photos/meadow.png","photos/lake-quote.png","photos/yoga-sunrise.png"].map((src,i)=>(
-                <div key={src} data-fade data-delay={String(i+1)}>
-                  <img src={asset(src)} alt="" className="mood-img"/>
+            <div className='mood-grid'>
+              {[
+                "photos/meadow.png",
+                "photos/lake-quote.png",
+                "photos/yoga-sunrise.png",
+              ].map((src, i) => (
+                <div key={src} data-fade data-delay={String(i + 1)}>
+                  <img src={asset(src)} alt='' className='mood-img' />
                 </div>
               ))}
             </div>
@@ -812,18 +855,24 @@ export default function App() {
         </div>
 
         {/* ── SERVICES ── */}
-        <div className="site-wrap">
-          <section id="services" className="services-section" style={{scrollMarginTop:124}}>
+        <div className='site-wrap'>
+          <section
+            id='services'
+            className='services-section'
+            style={{ scrollMarginTop: 124 }}
+          >
             <div data-fade>
-              <p className="section-label">Услуги</p>
-              <h2 className="section-h2">С чем <em>я работаю</em></h2>
+              <p className='section-label'>Услуги</p>
+              <h2 className='section-h2'>
+                С чем <em>я работаю</em>
+              </h2>
             </div>
-            <div className="services-grid" data-fade data-delay="1">
-              {services.map(item => (
-                <article className="service-card" key={item.title}>
-                  <p className="service-num">{item.num}</p>
-                  <h3 className="service-title">{item.title}</h3>
-                  <p className="service-desc">{item.description}</p>
+            <div className='services-grid' data-fade data-delay='1'>
+              {services.map((item) => (
+                <article className='service-card' key={item.title}>
+                  <p className='service-num'>{item.num}</p>
+                  <h3 className='service-title'>{item.title}</h3>
+                  <p className='service-desc'>{item.description}</p>
                 </article>
               ))}
             </div>
@@ -831,19 +880,32 @@ export default function App() {
         </div>
 
         {/* ── PROCESS ── */}
-        <div className="site-wrap">
-          <section id="process" className="process-section" style={{scrollMarginTop:124}}>
+        <div className='site-wrap'>
+          <section
+            id='process'
+            className='process-section'
+            style={{ scrollMarginTop: 124 }}
+          >
             <div data-fade>
-              <p className="section-label">Процесс</p>
-              <h2 className="section-h2">Как мы будем <em>работать</em></h2>
+              <p className='section-label'>Процесс</p>
+              <h2 className='section-h2'>
+                Как мы будем <em>работать</em>
+              </h2>
             </div>
-            <ol className="process-list" style={{listStyle:"none"}}>
-              {steps.map((step,i)=>(
-                <li className="process-item" key={step.title} data-fade data-delay={String(i+1)}>
-                  <span className="process-num">{String(i+1).padStart(2,"0")}</span>
+            <ol className='process-list' style={{ listStyle: "none" }}>
+              {steps.map((step, i) => (
+                <li
+                  className='process-item'
+                  key={step.title}
+                  data-fade
+                  data-delay={String(i + 1)}
+                >
+                  <span className='process-num'>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
                   <div>
-                    <p className="process-title">{step.title}</p>
-                    <p className="process-body">{step.body}</p>
+                    <p className='process-title'>{step.title}</p>
+                    <p className='process-body'>{step.body}</p>
                   </div>
                 </li>
               ))}
@@ -852,17 +914,19 @@ export default function App() {
         </div>
 
         {/* ── TRUST ── */}
-        <div className="site-wrap">
-          <section className="trust-section">
+        <div className='site-wrap'>
+          <section className='trust-section'>
             <div data-fade>
-              <p className="section-label">Доверие</p>
-              <h2 className="section-h2" style={{marginBottom:28}}>Важно <em>знать</em></h2>
-              <div className="trust-inner">
-                <div className="trust-icon">🌿</div>
-                <p className="trust-text">
-                  Я сама регулярно прохожу <strong>личную терапию</strong> и работаю с
-                  <strong> супервизором</strong> — это моя профессиональная этика и залог
-                  качества вашей поддержки.
+              <p className='section-label'>Доверие</p>
+              <h2 className='section-h2' style={{ marginBottom: 28 }}>
+                Важно <em>знать</em>
+              </h2>
+              <div className='trust-inner'>
+                <div className='trust-icon'>🌿</div>
+                <p className='trust-text'>
+                  Я сама регулярно прохожу <strong>личную терапию</strong> и
+                  работаю с<strong> супервизором</strong> — это моя
+                  профессиональная этика и залог качества вашей поддержки.
                 </p>
               </div>
             </div>
@@ -870,63 +934,134 @@ export default function App() {
         </div>
 
         {/* ── PRICING ── */}
-        <div className="site-wrap">
-          <section id="pricing" className="pricing-section" style={{scrollMarginTop:124}}>
+        <div className='site-wrap'>
+          <section
+            id='pricing'
+            className='pricing-section'
+            style={{ scrollMarginTop: 124 }}
+          >
             <div data-fade>
-              <p className="section-label">Оплата</p>
-              <h2 className="section-h2">Стоимость и <em>оплата</em></h2>
+              <p className='section-label'>Оплата</p>
+
+              <h2 className='section-h2'>
+                Запись и <em>оплата</em>
+              </h2>
             </div>
-            <div className="pricing-inner">
-              <div className="pricing-card" data-fade data-delay="1">
-                <p className="pricing-label">Минимальная сумма</p>
-                <p className="pricing-amount">
-                  {formatRub(siteContent.minimumSessionPriceRub) ?? "—"}
+
+            <div className='pricing-inner'>
+              <div className='pricing-card' data-fade data-delay='1'>
+                <p className='pricing-label'>Информация</p>
+
+                <p className='pricing-amount'>Оплата</p>
+
+                <p className='pricing-note'>
+                  Стоимость услуг не фиксирована и определяется по соглашению
+                  сторон. Оплата производится до начала сессии посредством
+                  банковского перевода по номеру телефона или номеру карты.
+                  Подробная информация о минимальной стоимости сеанса
+                  представлена на странице записи по ссылке, расположенной
+                  справа.
                 </p>
-                <p className="pricing-note">{siteContent.pricingNote}</p>
               </div>
-              <div className="pricing-card" data-fade data-delay="2" style={{background:"linear-gradient(150deg,#f3ebe0,#ede4d5)"}}>
-                <p className="pricing-label">Реквизиты</p>
-                <p className="pricing-amount" style={{fontSize:36,marginTop:14}}>После записи</p>
-                <p className="pricing-note">
-                  Реквизиты для оплаты пришлю после подтверждения записи.
-                  Оплата принимается до начала сессии.
+
+              <a
+                href='https://vk.cc/cXJ3c3'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='pricing-card'
+                data-fade
+                data-delay='2'
+                style={{
+                  background: "linear-gradient(150deg,#f3ebe0,#ede4d5)",
+                  textDecoration: "none",
+                  color: "inherit",
+                }}
+              >
+                <p className='pricing-label'>Онлайн-запись</p>
+
+                <p
+                  className='pricing-amount'
+                  style={{
+                    fontSize: 36,
+                    marginTop: 14,
+                  }}
+                >
+                  Перейти →
                 </p>
-              </div>
+
+                <p className='pricing-note'>
+                  Нажмите, чтобы перейти к записи и оплате.
+                </p>
+              </a>
             </div>
           </section>
         </div>
-
         {/* ── CONTACTS ── */}
-        <div className="site-wrap">
-          <section id="contacts" className="contacts-section" style={{scrollMarginTop:124}}>
-            <div className="contacts-inner" data-fade>
+        <div className='site-wrap'>
+          <section
+            id='contacts'
+            className='contacts-section'
+            style={{ scrollMarginTop: 124 }}
+          >
+            <div className='contacts-inner' data-fade>
               <div>
-                <p className="section-label" style={{color:"rgba(250,246,240,.4)"}}>Контакты</p>
-                <h2 className="contacts-h2">
-                  Записаться<br/>или <em>задать вопрос</em>
+                <p
+                  className='section-label'
+                  style={{ color: "rgba(250,246,240,.4)" }}
+                >
+                  Контакты
+                </p>
+                <h2 className='contacts-h2'>
+                  Записаться
+                  <br />
+                  или <em>задать вопрос</em>
                 </h2>
-                <p className="contacts-sub">
+                <p className='contacts-sub'>
                   Напишите примерный запрос — обсудим формат и сможем ли
                   поработать вместе.
                 </p>
               </div>
               <div>
-                <p style={{fontSize:12,letterSpacing:".14em",textTransform:"uppercase",color:"rgba(250,246,240,.38)",marginBottom:14}}>Связаться</p>
-                <div className="contacts-actions">
-                  <a className="contact-link-btn" href={`tel:${phoneTel}`}>
+                <p
+                  style={{
+                    fontSize: 12,
+                    letterSpacing: ".14em",
+                    textTransform: "uppercase",
+                    color: "rgba(250,246,240,.38)",
+                    marginBottom: 14,
+                  }}
+                >
+                  Связаться
+                </p>
+                <div className='contacts-actions'>
+                  <a className='contact-link-btn' href={`tel:${phoneTel}`}>
                     <span>📞</span> {phoneDisplay}
                   </a>
                   {telegramUsername ? (
-                    <a className="contact-link-btn" href={`https://t.me/${telegramUsername}`} target="_blank" rel="noreferrer">
+                    <a
+                      className='contact-link-btn'
+                      href={`https://t.me/${telegramUsername}`}
+                      target='_blank'
+                      rel='noreferrer'
+                    >
                       <span>✈️</span> @{telegramUsername}
                     </a>
                   ) : (
-                    <span style={{fontSize:13,color:"rgba(250,246,240,.45)"}}>
+                    <span
+                      style={{ fontSize: 13, color: "rgba(250,246,240,.45)" }}
+                    >
                       Telegram — по этому же номеру.
                     </span>
                   )}
-                  <button className="contact-link-btn" type="button" onClick={openModal}
-                    style={{border:"1.5px solid rgba(228,169,122,.5)",color:"#e4a97a"}}>
+                  <button
+                    className='contact-link-btn'
+                    type='button'
+                    onClick={openModal}
+                    style={{
+                      border: "1.5px solid rgba(228,169,122,.5)",
+                      color: "#e4a97a",
+                    }}
+                  >
                     ✉️ Оставить заявку
                   </button>
                 </div>
@@ -937,47 +1072,88 @@ export default function App() {
       </main>
 
       {/* ── FOOTER ── */}
-      <footer className="site-footer">
+      <footer className='site-footer'>
         <p>Карина Якимова · Практикующий психолог · Онлайн</p>
-        <p style={{fontSize:11}}>© {new Date().getFullYear()}</p>
+        <p style={{ fontSize: 11 }}>© {new Date().getFullYear()}</p>
       </footer>
 
       {/* ── MODAL ── */}
       <div
         className={`modal-overlay ${isModalOpen ? "open" : ""}`}
-        onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) closeModal();
+        }}
         aria-hidden={!isModalOpen}
       >
         <div
-          className="modal-box"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modal-title"
+          className='modal-box'
+          role='dialog'
+          aria-modal='true'
+          aria-labelledby='modal-title'
         >
-          <button className="modal-close" type="button" aria-label="Закрыть" onClick={closeModal}>×</button>
+          <button
+            className='modal-close'
+            type='button'
+            aria-label='Закрыть'
+            onClick={closeModal}
+          >
+            ×
+          </button>
 
-          <p className="section-label">Обратная связь</p>
-          <h2 id="modal-title" className="modal-h2">Оставьте заявку</h2>
-          <p className="modal-sub">Укажите имя, контакт и кратко ваш запрос — отвечу после записи.</p>
+          <p className='section-label'>Обратная связь</p>
+          <h2 id='modal-title' className='modal-h2'>
+            Оставьте заявку
+          </h2>
+          <p className='modal-sub'>
+            Укажите имя, контакт и кратко ваш запрос — отвечу после записи.
+          </p>
 
           <form onSubmit={handleSubmit} noValidate>
-            <div className="form-group">
-              <label className="form-label" htmlFor="f-name">Имя</label>
-              <input id="f-name" ref={nameInputRef} className="form-input" type="text" name="name" required placeholder="Ваше имя" />
+            <div className='form-group'>
+              <label className='form-label' htmlFor='f-name'>
+                Имя
+              </label>
+              <input
+                id='f-name'
+                ref={nameInputRef}
+                className='form-input'
+                type='text'
+                name='name'
+                required
+                placeholder='Ваше имя'
+              />
             </div>
-            <div className="form-group">
-              <label className="form-label" htmlFor="f-contact">Контакт</label>
-              <input id="f-contact" className="form-input" type="text" name="contact" required placeholder="Телефон или @username" />
+            <div className='form-group'>
+              <label className='form-label' htmlFor='f-contact'>
+                Контакт
+              </label>
+              <input
+                id='f-contact'
+                className='form-input'
+                type='text'
+                name='contact'
+                required
+                placeholder='Телефон или @username'
+              />
             </div>
-            <div className="form-group">
-              <label className="form-label" htmlFor="f-message">Сообщение</label>
-              <textarea id="f-message" className="form-input" name="message" rows="4" required placeholder="Коротко опишите запрос" />
+            <div className='form-group'>
+              <label className='form-label' htmlFor='f-message'>
+                Сообщение
+              </label>
+              <textarea
+                id='f-message'
+                className='form-input'
+                name='message'
+                rows='4'
+                required
+                placeholder='Коротко опишите запрос'
+              />
             </div>
             <button
-              className="btn-primary"
-              type="submit"
+              className='btn-primary'
+              type='submit'
               disabled={isSubmitting}
-              style={{marginTop:20, opacity: isSubmitting ? .65 : 1}}
+              style={{ marginTop: 20, opacity: isSubmitting ? 0.65 : 1 }}
             >
               {isSubmitting ? "Отправляем…" : "Отправить заявку"}
             </button>

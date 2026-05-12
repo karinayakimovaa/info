@@ -1,0 +1,26 @@
+# Опционально: раз в сутки дергает Vercel Deploy Hook (новый прод-сбор без коммита).
+# 1) Vercel → Project → Settings → Git → Deploy Hooks → создать hook для ветки production/main.
+# 2) GitHub → repo → Settings → Secrets → Actions → VERCEL_DEPLOY_HOOK_URL = URL из шага 1.
+# Расписание в UTC (сейчас 03:00 UTC ежедневно). Поменять: crontab.guru
+
+name: Vercel daily redeploy
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel Deploy Hook
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::notice::Пропуск: не задан секрет VERCEL_DEPLOY_HOOK_URL (см. комментарий в начале workflow)."
+            exit 0
+          fi
+          curl -fsS -X POST "$HOOK"
+          echo "Deploy hook вызван."

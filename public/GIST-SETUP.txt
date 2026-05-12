@@ -18,3 +18,8 @@
 Если gistId пустой или неверный — используется файл public/site-content.json на сайте.
 
 Опционально: переменная VITE_SITE_CONTENT_URL (сырой URL на JSON) перекрывает gist и локальный файл.
+
+--- Ежедневный redeploy на Vercel (если сайт там) ---
+В панели Vercel нет встроенного «раз в день». Сделайте Deploy Hook (Project → Settings → Git → Deploy Hooks),
+в GitHub добавьте секрет VERCEL_DEPLOY_HOOK_URL и включите workflow .github/workflows/vercel-daily-redeploy.yml
+(по умолчанию 03:00 UTC каждый день). Либо внешний cron (cron-job.org) раз в сутки POST на URL хука.
