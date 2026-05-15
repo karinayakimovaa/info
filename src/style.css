@@ -1,2 +1,109 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Manrope:wght@400;500;600;700&display=swap');
+﻿@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap");
 @import "tailwindcss";
+
+@theme {
+  --color-cream: #faf6f0;
+  --color-sand: #ede5d8;
+  --color-warm: #c9b49a;
+  --color-copper: #b5622e;
+  --color-copper2: #9b4f22;
+  --color-bark: #3a2316;
+  --color-mist: #5f7464;
+  --color-mist2: #3d5242;
+  --color-ink: #2a1f14;
+  --color-sub: #6b5d50;
+
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", ui-serif, Georgia, serif;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    background: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer utilities {
+  [data-fade] {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity 0.72s cubic-bezier(0.25, 0.8, 0.25, 1),
+      transform 0.72s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  [data-fade].is-visible {
+    opacity: 1;
+    transform: none;
+  }
+  [data-fade][data-delay="1"] {
+    transition-delay: 0.08s;
+  }
+  [data-fade][data-delay="2"] {
+    transition-delay: 0.18s;
+  }
+  [data-fade][data-delay="3"] {
+    transition-delay: 0.28s;
+  }
+  [data-fade][data-delay="4"] {
+    transition-delay: 0.38s;
+  }
+}
+
+@keyframes heroFloat {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+@keyframes softGlow {
+  0% {
+    box-shadow:
+      0 0 0 rgba(255, 255, 255, 0),
+      0 18px 40px rgba(120, 90, 60, 0.06);
+  }
+
+  50% {
+    box-shadow:
+      0 0 24px rgba(255, 255, 255, 0.18),
+      0 24px 54px rgba(120, 90, 60, 0.12);
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 rgba(255, 255, 255, 0),
+      0 18px 40px rgba(120, 90, 60, 0.06);
+  }
+}
+
+@keyframes slowZoom {
+  0% {
+    transform: scale(1.02);
+  }
+
+  50% {
+    transform: scale(1.06);
+  }
+
+  100% {
+    transform: scale(1.02);
+  }
+}
