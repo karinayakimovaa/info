@@ -451,13 +451,9 @@ export default function App() {
                 <div className="px-7 pt-6 pb-7">
                   <SectionLabel>Бережное сопровождение</SectionLabel>
                   <p className="font-serif italic text-[28px] font-normal text-[#4A97C3] leading-[1.35] mt-2.5">
-                    Спокойное пространство
+                  Рядом в комфортном
                     <br />
-                    для честного разговора
-                  </p>
-                  <p className="mt-3.5 max-w-[28ch] text-sm leading-[1.75] text-[#2E5F80]">
-                    На сайте оставила более личные и атмосферные кадры, чтобы
-                    пространство ощущалось теплее и живее.
+                    для Вас темпе
                   </p>
                 </div>
               </div>
