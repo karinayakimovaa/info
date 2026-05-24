@@ -1,6 +1,7 @@
 ﻿import { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { FaTelegramPlane, FaVk } from "react-icons/fa";
+import Decorations from "./Decorations";
 
 const phoneDisplay = "+7 (952) 330-74-96";
 const phoneTel = "+79523307496";
@@ -532,27 +533,28 @@ export default function App() {
   };
 
   return (
-    <>
+    <div className='relative isolate'>
+      <Decorations />
       <GlobalStyles />
+      <div className='relative z-10'>
+        {/* SCROLL PROGRESS BAR */}
+        <div
+          aria-hidden='true'
+          className='fixed top-0 left-0 z-[60] h-[2.5px] bg-gradient-to-r from-[#7DCAF0] via-[#5BA8D4] to-[#3A93C8] transition-none origin-left pointer-events-none'
+          style={{
+            width: `${scrollProgress * 100}%`,
+            opacity: scrollProgress > 0.005 ? 1 : 0,
+          }}
+        />
 
-      {/* SCROLL PROGRESS BAR */}
-      <div
-        aria-hidden='true'
-        className='fixed top-0 left-0 z-[60] h-[2.5px] bg-gradient-to-r from-[#7DCAF0] via-[#5BA8D4] to-[#3A93C8] transition-none origin-left pointer-events-none'
-        style={{
-          width: `${scrollProgress * 100}%`,
-          opacity: scrollProgress > 0.005 ? 1 : 0,
-        }}
-      />
-
-      {/* HEADER */}
-      <header
-        ref={headerRef}
-        className={
-          "sticky top-0 z-50 border-b border-[rgba(91,168,212,0.22)] bg-[rgba(240,249,255,0.94)] backdrop-blur-md transition-shadow duration-300 " +
-          (isScrolled ? "shadow-[0_4px_24px_rgba(91,168,212,0.13)]" : "")
-        }
-      >
+        {/* HEADER */}
+        <header
+          ref={headerRef}
+          className={
+            "sticky top-0 z-50 border-b border-[rgba(91,168,212,0.22)] bg-[rgba(240,249,255,0.94)] backdrop-blur-md transition-shadow duration-300 " +
+            (isScrolled ? "shadow-[0_4px_24px_rgba(91,168,212,0.13)]" : "")
+          }
+        >
         <div className='grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-[18px] md:px-10 lg:grid-cols-[auto_minmax(0,1fr)_220px] lg:gap-8'>
           <a
             href='#'
@@ -709,19 +711,12 @@ export default function App() {
               }
             >
               <div className='relative overflow-visible rounded-[28px] border border-[rgba(91,168,212,0.3)] bg-[linear-gradient(155deg,#f5fbff_0%,#deeef9_46%,#c8e4f5_100%)] shadow-[0_30px_80px_rgba(91,168,212,0.18)]'>
-                <div className='grid grid-cols-[1.05fr_0.95fr] gap-3 overflow-hidden rounded-t-[28px] p-3 pb-0'>
+                <div className='overflow-hidden rounded-t-[28px] p-3 pb-0'>
                   <div className='overflow-hidden rounded-[22px] shadow-[0_18px_45px_rgba(91,168,212,0.16)]'>
                     <img
                       src={asset("photos/photo_2026-05-24_10-31-25.jpg")}
                       alt='Карина с букетом роз на вечерней прогулке'
-                      className='block h-[280px] w-full object-cover object-[center_28%] transition-transform duration-[6000ms] hover:scale-[1.06] md:h-[320px]'
-                    />
-                  </div>
-                  <div className='overflow-hidden rounded-[22px] shadow-[0_18px_45px_rgba(91,168,212,0.16)]'>
-                    <img
-                      src={asset("photos/photo_2026-05-24_10-31-26.jpg")}
-                      alt='Карина с букетом гортензий в тёплом вечернем свете'
-                      className='block h-[280px] w-full object-cover object-[58%_center] transition-transform duration-[6000ms] hover:scale-[1.06] md:h-[320px]'
+                      className='block h-[320px] w-full object-cover object-[center_28%] transition-transform duration-[6000ms] hover:scale-[1.06] md:h-[380px]'
                     />
                   </div>
                 </div>
@@ -1128,9 +1123,19 @@ export default function App() {
       {/* FOOTER */}
       <footer className='border-t border-[rgba(91,168,212,0.18)] py-6 md:py-8 px-[18px] md:px-10'>
         <div className='max-w-[1180px] mx-auto flex flex-col md:flex-row gap-4 md:gap-0 justify-between items-center'>
-          <p className='text-xs text-[#7BAEC9] tracking-[0.06em]'>
-            Карина Якимова · Практикующий психолог · Онлайн
-          </p>
+          <div className='flex flex-col items-center gap-1 text-center md:items-start md:text-left'>
+            <p className='text-xs text-[#7BAEC9] tracking-[0.06em]'>
+              Карина Якимова · Практикующий психолог · Онлайн
+            </p>
+            <a
+              href='https://calsel.github.io/info/'
+              target='_blank'
+              rel='noreferrer'
+              className='text-[11px] text-[#7BAEC9]/80 tracking-[0.06em] no-underline transition-colors hover:text-[#5BA8D4]'
+            >
+              Made by Calsel
+            </a>
+          </div>
           <div className='flex items-center gap-3'>
             <a
               href='https://t.me/krnykmva'
@@ -1294,7 +1299,8 @@ export default function App() {
             </form>
           </div>
         </div>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
