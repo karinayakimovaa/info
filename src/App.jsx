@@ -593,7 +593,7 @@ export default function App() {
           </section>
         </div>
 
-        <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
+        <div className='max-w-[1180px] mx-auto px-[18px] md:px-10 mb-5 md:mb-6'>
           <Divider />
         </div>
 
@@ -649,15 +649,6 @@ export default function App() {
           >
             <div
               aria-hidden='true'
-              className='pointer-events-none absolute inset-x-0 bottom-0 h-[38%] bg-cover bg-center opacity-30 sm:hidden'
-              style={{
-                backgroundImage: `linear-gradient(180deg, rgba(220,236,248,0) 0%, rgba(220,236,248,0.18) 28%, rgba(220,236,248,0.76) 100%), url("${asset(
-                  "photos/photo_2026-05-24_11-19-07 (2).jpg",
-                )}")`,
-              }}
-            />
-            <div
-              aria-hidden='true'
               className='pointer-events-none absolute inset-y-0 right-0 hidden w-[34%] min-w-[260px] bg-cover bg-center opacity-50 sm:block'
               style={{
                 backgroundImage: `linear-gradient(270deg, rgba(220,236,248,0.18) 0%, rgba(220,236,248,0.82) 42%, rgba(220,236,248,0.98) 100%), url("${asset(
@@ -704,9 +695,7 @@ export default function App() {
               <SectionH2 className='mb-7'>
                 Важно <em>знать</em>
               </SectionH2>
-              <div
-                className='relative isolate overflow-hidden flex flex-col sm:flex-row items-start gap-5 sm:gap-10 p-9 sm:p-[52px_56px] rounded-[24px] border border-[rgba(91,168,212,0.28)] bg-[linear-gradient(130deg,rgba(245,251,255,0.9)_0%,rgba(222,238,249,0.86)_56%,rgba(200,228,245,0.84)_100%)]'
-              >
+              <div className='relative isolate overflow-hidden flex flex-col sm:flex-row items-start gap-5 sm:gap-10 p-9 sm:p-[52px_56px] rounded-[24px] border border-[rgba(91,168,212,0.28)] bg-[linear-gradient(130deg,rgba(245,251,255,0.9)_0%,rgba(222,238,249,0.86)_56%,rgba(200,228,245,0.84)_100%)]'>
                 <div
                   aria-hidden='true'
                   className='pointer-events-none absolute inset-0 bg-cover bg-center opacity-[0.3] sm:opacity-[0.22]'
