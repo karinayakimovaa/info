@@ -171,14 +171,14 @@ const BtnPrimary = ({ className = "", ...props }) => (
 );
 
 const Divider = () => (
-  <div className="flex items-center gap-4 py-1">
-    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[rgba(91,168,212,0.4)] to-transparent" />
-    <div className="flex items-center gap-[7px]">
-      <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(91,168,212,0.35)]" />
-      <span className="block w-[7px] h-[7px] rotate-45 bg-[rgba(91,168,212,0.45)]" />
-      <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(91,168,212,0.35)]" />
+  <div className='flex items-center gap-4 py-1'>
+    <div className='flex-1 h-px bg-gradient-to-r from-transparent via-[rgba(91,168,212,0.4)] to-transparent' />
+    <div className='flex items-center gap-[7px]'>
+      <span className='block w-[5px] h-[5px] rounded-full bg-[rgba(91,168,212,0.35)]' />
+      <span className='block w-[7px] h-[7px] rotate-45 bg-[rgba(91,168,212,0.45)]' />
+      <span className='block w-[5px] h-[5px] rounded-full bg-[rgba(91,168,212,0.35)]' />
     </div>
-    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[rgba(91,168,212,0.4)] to-transparent" />
+    <div className='flex-1 h-px bg-gradient-to-r from-transparent via-[rgba(91,168,212,0.4)] to-transparent' />
   </div>
 );
 
@@ -294,28 +294,30 @@ export default function App() {
       {/* HEADER */}
       <header
         ref={headerRef}
-        className="sticky top-0 z-50 border-b border-[rgba(91,168,212,0.22)] bg-[rgba(240,249,255,0.92)] backdrop-blur-md"
+        className='sticky top-0 z-50 border-b border-[rgba(91,168,212,0.22)] bg-[rgba(240,249,255,0.92)] backdrop-blur-md'
       >
-        <div className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-[18px] md:px-10 lg:grid-cols-[auto_minmax(0,1fr)_220px] lg:gap-8">
+        <div className='grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-[18px] md:px-10 lg:grid-cols-[auto_minmax(0,1fr)_220px] lg:gap-8'>
           <a
-            href="#"
-            aria-label="Карина Якимова — главная"
-            className="flex h-[98px] min-w-0 items-center leading-none no-underline md:h-[118px] lg:justify-self-start"
+            href='#'
+            aria-label='Карина Якимова — главная'
+            className='flex h-[98px] min-w-0 items-center leading-none no-underline md:h-[118px] lg:justify-self-start'
           >
             <img
               src={asset("logo.svg")}
-              width="682"
-              height="182"
-              alt="Карина Якимова — практикующий психолог"
-              decoding="async"
-              className="block h-16 w-auto max-w-full md:h-[90px]"
-              style={{ filter: "hue-rotate(175deg) saturate(0.85) brightness(0.88)" }}
+              width='682'
+              height='182'
+              alt='Карина Якимова — практикующий психолог'
+              decoding='async'
+              className='block h-16 w-auto max-w-full md:h-[90px]'
+              style={{
+                filter: "hue-rotate(175deg) saturate(0.85) brightness(0.88)",
+              }}
             />
           </a>
 
           <nav
-            aria-label="Основная навигация"
-            className="hidden lg:flex items-center justify-center gap-1 xl:gap-2"
+            aria-label='Основная навигация'
+            className='hidden lg:flex items-center justify-center gap-1 xl:gap-2'
           >
             {[
               ["#about", "Обо мне"],
@@ -327,7 +329,7 @@ export default function App() {
               <a
                 key={href}
                 href={href}
-                className="inline-flex h-11 items-center justify-center rounded-full px-4 xl:px-5 text-[13px] tracking-[0.04em] text-[#2E5F80] no-underline transition-[color,background-color] hover:bg-white/70 hover:text-[#0F2D45]"
+                className='inline-flex h-11 items-center justify-center rounded-full px-4 xl:px-5 text-[13px] tracking-[0.04em] text-[#2E5F80] no-underline transition-[color,background-color] hover:bg-white/70 hover:text-[#0F2D45]'
               >
                 {label}
               </a>
@@ -336,19 +338,19 @@ export default function App() {
 
           <BtnPrimary
             onClick={openModal}
-            type="button"
-            className="max-lg:!hidden lg:!inline-flex lg:h-11 lg:min-w-[174px] lg:justify-center lg:justify-self-end lg:px-7 lg:py-0 lg:text-[13px]"
+            type='button'
+            className='max-lg:!hidden lg:!inline-flex lg:h-11 lg:min-w-[174px] lg:justify-center lg:justify-self-end lg:px-7 lg:py-0 lg:text-[13px]'
           >
             Записаться
           </BtnPrimary>
 
           <button
-            type="button"
+            type='button'
             aria-label={isMenuOpen ? "Закрыть меню" : "Открыть меню"}
             aria-expanded={isMenuOpen}
-            aria-controls="mobile-nav"
+            aria-controls='mobile-nav'
             onClick={() => setIsMenuOpen((v) => !v)}
-            className="flex h-[42px] w-[42px] items-center justify-center rounded-lg border-[1.5px] border-[#A8D4EC] bg-transparent text-xl leading-none text-[#0F2D45] cursor-pointer lg:hidden transition-colors hover:bg-[#EEF7FC]"
+            className='flex h-[42px] w-[42px] items-center justify-center rounded-lg border-[1.5px] border-[#A8D4EC] bg-transparent text-xl leading-none text-[#0F2D45] cursor-pointer lg:hidden transition-colors hover:bg-[#EEF7FC]'
           >
             {isMenuOpen ? "×" : "☰"}
           </button>
@@ -357,14 +359,14 @@ export default function App() {
 
       {/* mobile nav — FIX: анимация появления через transition + CSS-класс */}
       <div
-        id="mobile-nav"
+        id='mobile-nav'
         aria-hidden={!isMenuOpen}
         className={
           "lg:hidden overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out " +
           (isMenuOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0")
         }
       >
-        <div className="flex flex-col gap-4 px-[18px] py-5 bg-[#EEF7FC] border-b border-[rgba(91,168,212,0.22)]">
+        <div className='flex flex-col gap-4 px-[18px] py-5 bg-[#EEF7FC] border-b border-[rgba(91,168,212,0.22)]'>
           {[
             ["#about", "Обо мне"],
             ["#services", "Услуги"],
@@ -375,12 +377,12 @@ export default function App() {
             <a
               key={href}
               href={href}
-              className="text-[15px] text-[#2E5F80] no-underline hover:text-[#0F2D45] transition-colors"
+              className='text-[15px] text-[#2E5F80] no-underline hover:text-[#0F2D45] transition-colors'
             >
               {label}
             </a>
           ))}
-          <BtnPrimary type="button" onClick={openModal} className="w-fit mt-1">
+          <BtnPrimary type='button' onClick={openModal} className='w-fit mt-1'>
             Записаться
           </BtnPrimary>
         </div>
@@ -388,37 +390,37 @@ export default function App() {
 
       <main>
         {/* HERO */}
-        <div className="max-w-[1180px] mx-auto px-[18px] md:px-10">
+        <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
           <section
-            id="about"
-            className="grid grid-cols-1 md:grid-cols-[1fr_420px] gap-10 md:gap-14 items-center py-[52px] md:py-[80px_70px] [scroll-margin-top:124px]"
+            id='about'
+            className='grid grid-cols-1 md:grid-cols-[1fr_420px] gap-10 md:gap-14 items-center py-[52px] md:py-[80px_70px] [scroll-margin-top:124px]'
           >
             <div data-fade>
               <p className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.16em] text-[#2E5F80] bg-[#DDF0FA]/95 px-3.5 py-[5px] rounded-full mb-6 before:content-[''] before:w-2 before:h-2 before:rounded-full before:bg-[#7DCAF0] before:animate-pulse before:shadow-[0_0_0_4px_rgba(125,202,240,0.28),0_0_12px_rgba(125,202,240,0.62)] before:shrink-0">
                 Практикующий психолог
               </p>
-              <h1 className="font-serif font-bold text-[clamp(42px,5.5vw,72px)] leading-[1.1] -tracking-[0.02em] text-[#0F2D45] [&_em]:italic [&_em]:font-normal [&_em]:text-[#3A93C8]">
+              <h1 className='font-serif font-bold text-[clamp(42px,5.5vw,72px)] leading-[1.1] -tracking-[0.02em] text-[#0F2D45] [&_em]:italic [&_em]:font-normal [&_em]:text-[#3A93C8]'>
                 Опора и ясность —<br />
                 <em>шаг за шагом</em>
               </h1>
               {/* FIX: убрана опечатка в конце предложения */}
-              <p className="mt-6 text-[17px] leading-[1.85] text-[#2C5270] max-w-[44ch]">
+              <p className='mt-6 text-[17px] leading-[1.85] text-[#2C5270] max-w-[44ch]'>
                 Меня зовут Карина Якимова. Я практикующий психолог. Помогаю
                 справляться с повседневными трудностями, находить опору и
                 понимать себя.
               </p>
-              <div className="mt-9 flex items-center gap-5 flex-wrap">
-                <BtnPrimary type="button" onClick={openModal}>
+              <div className='mt-9 flex items-center gap-5 flex-wrap'>
+                <BtnPrimary type='button' onClick={openModal}>
                   Записаться
                 </BtnPrimary>
                 <a
-                  href="#services"
-                  className="text-[13px] font-medium tracking-[0.04em] text-[#5BA8D4] no-underline border-b border-current pb-px transition-colors hover:text-[#4A97C3]"
+                  href='#services'
+                  className='text-[13px] font-medium tracking-[0.04em] text-[#5BA8D4] no-underline border-b border-current pb-px transition-colors hover:text-[#4A97C3]'
                 >
                   Смотреть услуги
                 </a>
               </div>
-              <ul className="flex gap-2.5 flex-wrap mt-7 list-none p-0">
+              <ul className='flex gap-2.5 flex-wrap mt-7 list-none p-0'>
                 {[
                   "Яндекс Телемост",
                   "Индивидуально",
@@ -426,7 +428,7 @@ export default function App() {
                 ].map((p) => (
                   <li
                     key={p}
-                    className="text-xs text-[#2E5F80] border border-[#A8D4EC]/70 rounded-full px-3.5 py-[5px] bg-white/72"
+                    className='text-xs text-[#2E5F80] border border-[#A8D4EC]/70 rounded-full px-3.5 py-[5px] bg-white/72'
                   >
                     {p}
                   </li>
@@ -437,21 +439,21 @@ export default function App() {
             {/* hero card */}
             <div
               data-fade
-              data-delay="2"
-              className="animate-[heroFloat_7s_ease-in-out_infinite]"
+              data-delay='2'
+              className='animate-[heroFloat_7s_ease-in-out_infinite]'
             >
-              <div className="relative overflow-visible rounded-[28px] border border-[rgba(91,168,212,0.3)] bg-[linear-gradient(155deg,#f5fbff_0%,#deeef9_46%,#c8e4f5_100%)] shadow-[0_30px_80px_rgba(91,168,212,0.18)] before:absolute before:inset-0 before:rounded-[28px] before:bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.84),transparent_45%)] before:pointer-events-none">
-                <div className="overflow-hidden rounded-t-[28px]">
+              <div className='relative overflow-visible rounded-[28px] border border-[rgba(91,168,212,0.3)] bg-[linear-gradient(155deg,#f5fbff_0%,#deeef9_46%,#c8e4f5_100%)] shadow-[0_30px_80px_rgba(91,168,212,0.18)] before:absolute before:inset-0 before:rounded-[28px] before:bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.84),transparent_45%)] before:pointer-events-none'>
+                <div className='overflow-hidden rounded-t-[28px]'>
                   <img
                     src={asset("photos/photo_2026-05-24_10-31-25.jpg")}
-                    alt="Карина с букетом роз на вечерней прогулке"
-                    className="block w-full h-[320px] object-cover object-[center_28%] scale-[1.02] transition-transform duration-[6000ms] hover:scale-[1.06]"
+                    alt='Карина с букетом роз на вечерней прогулке'
+                    className='block w-full h-[320px] object-cover object-[center_28%] scale-[1.02] transition-transform duration-[6000ms] hover:scale-[1.06]'
                   />
                 </div>
-                <div className="px-7 pt-6 pb-7">
+                <div className='px-7 pt-6 pb-7'>
                   <SectionLabel>Бережное сопровождение</SectionLabel>
-                  <p className="font-serif italic text-[28px] font-normal text-[#4A97C3] leading-[1.35] mt-2.5">
-                  Рядом в комфортном
+                  <p className='font-serif italic text-[28px] font-normal text-[#4A97C3] leading-[1.35] mt-2.5'>
+                    Рядом в комфортном
                     <br />
                     для Вас темпе
                   </p>
@@ -462,15 +464,15 @@ export default function App() {
         </div>
 
         {/* MOOD */}
-        <div className="max-w-[1180px] mx-auto px-[18px] md:px-10">
-          <section className="py-16 border-t border-[rgba(91,168,212,0.18)] mt-8">
+        <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
+          <section className='py-16 border-t border-[rgba(91,168,212,0.18)] mt-8'>
             <div data-fade>
               <SectionLabel>Атмосфера</SectionLabel>
               <SectionH2>
                 Пространство <em>для Вас</em>
               </SectionH2>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-4 auto-rows-auto gap-3.5 sm:gap-[18px] mt-9">
+            <div className='grid grid-cols-1 sm:grid-cols-4 auto-rows-auto gap-3.5 sm:gap-[18px] mt-9'>
               {moodPhotos.map((photo, i) => (
                 <div
                   key={photo.src}
@@ -492,13 +494,13 @@ export default function App() {
           </section>
         </div>
 
-        <div className="max-w-[1180px] mx-auto px-[18px] md:px-10">
+        <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
           <Divider />
         </div>
 
         {/* SERVICES */}
-        <div className="max-w-[1180px] mx-auto px-[18px] md:px-10">
-          <section id="services" className="py-16 [scroll-margin-top:124px]">
+        <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
+          <section id='services' className='py-16 [scroll-margin-top:124px]'>
             <div data-fade>
               <SectionLabel>Услуги</SectionLabel>
               <SectionH2>
@@ -507,27 +509,27 @@ export default function App() {
             </div>
             <div
               data-fade
-              data-delay="1"
-              className="grid grid-cols-1 sm:grid-cols-2 mt-11 rounded-[24px] overflow-hidden border-[1.5px] border-[rgba(91,168,212,0.28)] divide-y divide-[rgba(91,168,212,0.2)] sm:divide-y-0 sm:[&>article]:border-r-[1.5px] sm:[&>article]:border-[rgba(91,168,212,0.2)] sm:[&>article:nth-child(2n)]:border-r-0 sm:[&>article:nth-child(-n+2)]:border-b-[1.5px]"
+              data-delay='1'
+              className='grid grid-cols-1 sm:grid-cols-2 mt-11 rounded-[24px] overflow-hidden border-[1.5px] border-[rgba(91,168,212,0.28)] divide-y divide-[rgba(91,168,212,0.2)] sm:divide-y-0 sm:[&>article]:border-r-[1.5px] sm:[&>article]:border-[rgba(91,168,212,0.2)] sm:[&>article:nth-child(2n)]:border-r-0 sm:[&>article:nth-child(-n+2)]:border-b-[1.5px]'
             >
               {services.map((item) => (
                 <article
                   key={item.title}
-                  className="group px-8 pt-8 pb-9 bg-[linear-gradient(180deg,#f5fbff_0%,#deeef9_100%)] transition-colors hover:bg-white relative overflow-hidden"
+                  className='group px-8 pt-8 pb-9 bg-[linear-gradient(180deg,#f5fbff_0%,#deeef9_100%)] transition-colors hover:bg-white relative overflow-hidden'
                 >
                   <span
-                    aria-hidden="true"
-                    className="absolute right-[-8px] bottom-[-18px] font-serif font-bold text-[110px] leading-none text-[#5BA8D4]/[0.08] pointer-events-none select-none transition-[transform,color] duration-300 group-hover:scale-110 group-hover:-translate-y-1.5 group-hover:text-[#5BA8D4]/[0.13]"
+                    aria-hidden='true'
+                    className='absolute right-[-8px] bottom-[-18px] font-serif font-bold text-[110px] leading-none text-[#5BA8D4]/[0.08] pointer-events-none select-none transition-[transform,color] duration-300 group-hover:scale-110 group-hover:-translate-y-1.5 group-hover:text-[#5BA8D4]/[0.13]'
                   >
                     {item.num}
                   </span>
-                  <p className="font-serif text-[13px] tracking-[0.18em] text-[#5BA8D4] relative z-10">
+                  <p className='font-serif text-[13px] tracking-[0.18em] text-[#5BA8D4] relative z-10'>
                     {item.num}
                   </p>
-                  <h3 className="font-serif text-[26px] font-medium text-[#0F2D45] mt-2 leading-[1.25] relative z-10">
+                  <h3 className='font-serif text-[26px] font-medium text-[#0F2D45] mt-2 leading-[1.25] relative z-10'>
                     {item.title}
                   </h3>
-                  <p className="text-sm leading-[1.75] text-[#2E5F80] mt-3 relative z-10">
+                  <p className='text-sm leading-[1.75] text-[#2E5F80] mt-3 relative z-10'>
                     {item.description}
                   </p>
                 </article>
@@ -536,47 +538,47 @@ export default function App() {
           </section>
         </div>
 
-        <div className="max-w-[1180px] mx-auto px-[18px] md:px-10">
+        <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
           <Divider />
         </div>
 
         {/* PROCESS */}
-        <div className="max-w-[1180px] mx-auto px-[18px] md:px-10">
+        <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
           <section
-            id="process"
-            className="relative overflow-hidden py-16 px-6 sm:px-8 lg:px-10 rounded-[30px] border border-[rgba(91,168,212,0.22)] bg-[linear-gradient(135deg,rgba(245,251,255,0.96)_0%,rgba(222,238,249,0.94)_58%,rgba(200,228,245,0.9)_100%)] [scroll-margin-top:124px]"
+            id='process'
+            className='relative overflow-hidden py-16 px-6 sm:px-8 lg:px-10 rounded-[30px] border border-[rgba(91,168,212,0.22)] bg-[linear-gradient(135deg,rgba(245,251,255,0.96)_0%,rgba(222,238,249,0.94)_58%,rgba(200,228,245,0.9)_100%)] [scroll-margin-top:124px]'
           >
             <div
-              aria-hidden="true"
-              className="absolute inset-y-0 right-0 hidden w-[34%] min-w-[260px] bg-cover bg-center opacity-50 md:block"
+              aria-hidden='true'
+              className='absolute inset-y-0 right-0 hidden w-[34%] min-w-[260px] bg-cover bg-center opacity-50 md:block'
               style={{
                 backgroundImage: `linear-gradient(270deg, rgba(220,236,248,0.18) 0%, rgba(220,236,248,0.82) 42%, rgba(220,236,248,0.98) 100%), url("${asset(
                   "photos/photo_2026-05-24_11-19-07 (2).jpg",
                 )}")`,
               }}
             />
-            <div data-fade className="relative z-10 max-w-[760px]">
+            <div data-fade className='relative z-10 max-w-[760px]'>
               <SectionLabel>Процесс</SectionLabel>
               <SectionH2>
                 Как мы будем <em>работать</em>
               </SectionH2>
             </div>
-            <ol className="relative z-10 flex flex-col mt-11 list-none p-0 max-w-[760px]">
+            <ol className='relative z-10 flex flex-col mt-11 list-none p-0 max-w-[760px]'>
               {steps.map((step, i) => (
                 <li
                   key={step.title}
                   data-fade
                   data-delay={String(i + 1)}
-                  className="grid grid-cols-[48px_1fr] gap-6 py-7 border-b border-[rgba(91,168,212,0.18)] items-start first:border-t first:border-[rgba(91,168,212,0.18)]"
+                  className='grid grid-cols-[48px_1fr] gap-6 py-7 border-b border-[rgba(91,168,212,0.18)] items-start first:border-t first:border-[rgba(91,168,212,0.18)]'
                 >
-                  <span className="font-serif text-[40px] font-light text-[#5BA8D4]/25 leading-none">
+                  <span className='font-serif text-[40px] font-light text-[#5BA8D4]/25 leading-none'>
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <div>
-                    <p className="font-serif text-[22px] font-medium text-[#0F2D45] mb-2">
+                    <p className='font-serif text-[22px] font-medium text-[#0F2D45] mb-2'>
                       {step.title}
                     </p>
-                    <p className="text-[15px] leading-[1.75] text-[#2E5F80]">
+                    <p className='text-[15px] leading-[1.75] text-[#2E5F80]'>
                       {step.body}
                     </p>
                   </div>
@@ -587,15 +589,15 @@ export default function App() {
         </div>
 
         {/* TRUST */}
-        <div className="max-w-[1180px] mx-auto px-[18px] md:px-10">
-          <section className="py-16 border-t border-[rgba(91,168,212,0.18)]">
+        <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
+          <section className='py-16 border-t border-[rgba(91,168,212,0.18)]'>
             <div data-fade>
               <SectionLabel>Доверие</SectionLabel>
-              <SectionH2 className="mb-7">
+              <SectionH2 className='mb-7'>
                 Важно <em>знать</em>
               </SectionH2>
               <div
-                className="relative isolate overflow-hidden flex flex-col sm:flex-row items-start gap-5 sm:gap-10 p-9 sm:p-[52px_56px] rounded-[24px] border border-[rgba(91,168,212,0.28)] bg-[linear-gradient(130deg,#f5fbff_0%,#deeef9_58%,#c8e4f5_100%)]"
+                className='relative isolate overflow-hidden flex flex-col sm:flex-row items-start gap-5 sm:gap-10 p-9 sm:p-[52px_56px] rounded-[24px] border border-[rgba(91,168,212,0.28)] bg-[linear-gradient(130deg,#f5fbff_0%,#deeef9_58%,#c8e4f5_100%)]'
                 style={{
                   backgroundImage: `linear-gradient(130deg, rgba(245,251,255,0.96) 0%, rgba(222,238,249,0.94) 56%, rgba(200,228,245,0.92) 100%), url("${asset(
                     "photos/photo_2026-05-24_11-19-09.jpg",
@@ -605,12 +607,12 @@ export default function App() {
                 }}
               >
                 <div
-                  aria-hidden="true"
-                  className="relative z-10 shrink-0 w-12 h-12 rounded-xl bg-[#5BA8D4] text-white flex items-center justify-center text-[22px]"
+                  aria-hidden='true'
+                  className='relative z-10 shrink-0 w-12 h-12 rounded-xl bg-[#5BA8D4] text-white flex items-center justify-center text-[22px]'
                 >
                   ✓
                 </div>
-                <p className="relative z-10 text-base leading-[1.8] text-[#2E5F80] [&_strong]:text-[#0F2D45] [&_strong]:font-medium">
+                <p className='relative z-10 text-base leading-[1.8] text-[#2E5F80] [&_strong]:text-[#0F2D45] [&_strong]:font-medium'>
                   Я сама регулярно прохожу <strong>личную терапию</strong> и
                   работаю с <strong>супервизором</strong> — это моя
                   профессиональная этика и залог качества вашей поддержки.
@@ -620,54 +622,53 @@ export default function App() {
           </section>
         </div>
 
-        <div className="max-w-[1180px] mx-auto px-[18px] md:px-10">
+        <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
           <Divider />
         </div>
 
         {/* PRICING */}
-        <div className="max-w-[1180px] mx-auto px-[18px] md:px-10">
-          <section id="pricing" className="py-16 [scroll-margin-top:124px]">
+        <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
+          <section id='pricing' className='py-16 [scroll-margin-top:124px]'>
             <div data-fade>
               <SectionLabel>Оплата</SectionLabel>
               <SectionH2>
                 Запись и <em>оплата</em>
               </SectionH2>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-11">
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-6 mt-11'>
               <div
                 data-fade
-                data-delay="1"
-                className="bg-[linear-gradient(180deg,#f5fbff_0%,#deeef9_100%)] border-[1.5px] border-[rgba(91,168,212,0.28)] rounded-[20px] p-8 pb-9"
+                data-delay='1'
+                className='bg-[linear-gradient(180deg,#f5fbff_0%,#deeef9_100%)] border-[1.5px] border-[rgba(91,168,212,0.28)] rounded-[20px] p-8 pb-9'
               >
-                <p className="text-xs tracking-[0.12em] uppercase text-[#5BA8D4]">
+                <p className='text-xs tracking-[0.12em] uppercase text-[#5BA8D4]'>
                   Информация
                 </p>
-                <p className="font-serif text-[52px] font-normal text-[#0F2D45] leading-none mt-3 mb-1">
+                <p className='font-serif text-[52px] font-normal text-[#0F2D45] leading-none mt-3 mb-1'>
                   Оплата
                 </p>
-                <p className="text-sm leading-[1.7] text-[#2E5F80] mt-3.5">
-                  Фиксированной стоимости нет — сколько желаете и можете. Оплата
-                  производится до начала сессии банковским переводом по номеру
-                  телефона или карты. Подробная информация о минимальной
+                <p className='text-sm leading-[1.7] text-[#2E5F80] mt-3.5'>
+                  Оплата производится до начала сессии банковским переводом по
+                  номеру телефона или карты. Подробная информация о минимальной
                   стоимости сеанса есть на странице записи по ссылке.
                 </p>
               </div>
 
               <a
-                href="https://vk.cc/cXJ3c3"
-                target="_blank"
-                rel="noopener noreferrer"
+                href='https://vk.cc/cXJ3c3'
+                target='_blank'
+                rel='noopener noreferrer'
                 data-fade
-                data-delay="2"
-                className="border-[1.5px] border-[rgba(91,168,212,0.28)] rounded-[20px] p-8 pb-9 no-underline text-inherit bg-[linear-gradient(150deg,#f5fbff,#deeef9,#c8e4f5)] transition-shadow hover:shadow-[0_8px_24px_rgba(91,168,212,0.18)]"
+                data-delay='2'
+                className='border-[1.5px] border-[rgba(91,168,212,0.28)] rounded-[20px] p-8 pb-9 no-underline text-inherit bg-[linear-gradient(150deg,#f5fbff,#deeef9,#c8e4f5)] transition-shadow hover:shadow-[0_8px_24px_rgba(91,168,212,0.18)]'
               >
-                <p className="text-xs tracking-[0.12em] uppercase text-[#5BA8D4]">
+                <p className='text-xs tracking-[0.12em] uppercase text-[#5BA8D4]'>
                   Онлайн-запись
                 </p>
-                <p className="font-serif text-[36px] font-normal text-[#0F2D45] leading-none mt-3.5 mb-1">
+                <p className='font-serif text-[36px] font-normal text-[#0F2D45] leading-none mt-3.5 mb-1'>
                   Перейти →
                 </p>
-                <p className="text-sm leading-[1.7] text-[#2E5F80] mt-3.5">
+                <p className='text-sm leading-[1.7] text-[#2E5F80] mt-3.5'>
                   Нажмите, чтобы перейти к записи и оплате.
                 </p>
               </a>
@@ -676,14 +677,14 @@ export default function App() {
         </div>
 
         {/* CONTACTS */}
-        <div className="max-w-[1180px] mx-auto px-[18px] md:px-10">
+        <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
           <section
-            id="contacts"
-            className="pt-16 pb-20 border-t border-[rgba(91,168,212,0.18)] [scroll-margin-top:124px]"
+            id='contacts'
+            className='pt-16 pb-20 border-t border-[rgba(91,168,212,0.18)] [scroll-margin-top:124px]'
           >
             <div
               data-fade
-              className="relative isolate overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-9 md:gap-12 items-start rounded-[28px] p-9 sm:p-[56px_60px]"
+              className='relative isolate overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-9 md:gap-12 items-start rounded-[28px] p-9 sm:p-[56px_60px]'
               style={{
                 backgroundImage: `linear-gradient(145deg, rgba(30,79,112,0.95) 0%, rgba(43,111,150,0.92) 44%, rgba(91,168,212,0.84) 100%), url("${asset(
                   "photos/photo_2026-05-24_11-19-09 (2).jpg",
@@ -693,77 +694,80 @@ export default function App() {
               }}
             >
               <div>
-                <div className="mb-3.5 flex items-center gap-3">
-                  <p className="inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.2em] text-[#B8DFF5]/50 before:block before:w-5 before:h-px before:bg-[#B8DFF5]/40">
+                <div className='mb-3.5 flex items-center gap-3'>
+                  <p className='inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.2em] text-[#B8DFF5]/50 before:block before:w-5 before:h-px before:bg-[#B8DFF5]/40'>
                     Контакты
                   </p>
                   <span
-                    aria-hidden="true"
-                    className="grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-white/10 text-lg"
+                    aria-hidden='true'
+                    className='grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-white/10 text-lg'
                   >
                     🌿
                   </span>
                 </div>
-                <h2 className="font-serif font-normal text-[clamp(32px,4.5vw,52px)] leading-[1.08] text-[#F0F9FF] [&_em]:italic [&_em]:text-[#C8EEFF]">
+                <h2 className='font-serif font-normal text-[clamp(32px,4.5vw,52px)] leading-[1.08] text-[#F0F9FF] [&_em]:italic [&_em]:text-[#C8EEFF]'>
                   Записаться
                   <br />
                   или <em>задать вопрос</em>
                 </h2>
-                <p className="text-[15px] leading-[1.8] text-[#B8DFF5]/70 mt-4">
+                <p className='text-[15px] leading-[1.8] text-[#B8DFF5]/70 mt-4'>
                   Напишите примерный запрос — обсудим формат и сможем ли
                   поработать вместе.
                 </p>
               </div>
               <div>
-                <p className="text-xs tracking-[0.14em] uppercase text-[#B8DFF5]/50 mb-3.5">
+                <p className='text-xs tracking-[0.14em] uppercase text-[#B8DFF5]/50 mb-3.5'>
                   Связаться
                 </p>
-                <div className="flex flex-col gap-3.5">
+                <div className='flex flex-col gap-3.5'>
                   <a
                     href={`tel:${phoneTel}`}
-                    className="inline-flex items-center gap-2.5 text-sm font-medium text-[#F0F9FF] no-underline bg-white/[0.08] border border-white/[0.14] rounded-full px-5 py-3 transition-colors hover:bg-white/[0.14] cursor-pointer w-fit"
+                    className='inline-flex items-center gap-2.5 text-sm font-medium text-[#F0F9FF] no-underline bg-white/[0.08] border border-white/[0.14] rounded-full px-5 py-3 transition-colors hover:bg-white/[0.14] cursor-pointer w-fit'
                   >
-                    <span aria-hidden="true">☏</span>
+                    <span aria-hidden='true'>☏</span>
                     <span>Телефон:</span> {phoneDisplay}
                   </a>
                   {telegramUsername ? (
                     <a
                       href={`https://t.me/${telegramUsername}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-2.5 text-sm font-medium text-[#F0F9FF] no-underline bg-white/[0.08] border border-white/[0.14] rounded-full px-5 py-3 transition-colors hover:bg-white/[0.14] w-fit"
+                      target='_blank'
+                      rel='noreferrer'
+                      className='inline-flex items-center gap-2.5 text-sm font-medium text-[#F0F9FF] no-underline bg-white/[0.08] border border-white/[0.14] rounded-full px-5 py-3 transition-colors hover:bg-white/[0.14] w-fit'
                     >
                       <span>Telegram:</span> @{telegramUsername}
                     </a>
                   ) : (
-                    <span className="text-[13px] text-[#B8DFF5]/55">
+                    <span className='text-[13px] text-[#B8DFF5]/55'>
                       Telegram — по этому же номеру.
                     </span>
                   )}
                   <a
-                    href="https://t.me/krnykmva"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-2.5 text-sm font-medium text-[#F0F9FF] no-underline bg-white/[0.08] border border-white/[0.14] rounded-full px-5 py-3 transition-colors hover:bg-white/[0.14] w-fit"
+                    href='https://t.me/krnykmva'
+                    target='_blank'
+                    rel='noreferrer'
+                    className='inline-flex items-center gap-2.5 text-sm font-medium text-[#F0F9FF] no-underline bg-white/[0.08] border border-white/[0.14] rounded-full px-5 py-3 transition-colors hover:bg-white/[0.14] w-fit'
                   >
-                    <FaTelegramPlane className="text-[16px] shrink-0" aria-hidden="true" />
+                    <FaTelegramPlane
+                      className='text-[16px] shrink-0'
+                      aria-hidden='true'
+                    />
                     Telegram-канал
                   </a>
                   <a
-                    href="https://vk.ru/krnykmvapsy"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-2.5 text-sm font-medium text-[#F0F9FF] no-underline bg-white/[0.08] border border-white/[0.14] rounded-full px-5 py-3 transition-colors hover:bg-white/[0.14] w-fit"
+                    href='https://vk.ru/krnykmvapsy'
+                    target='_blank'
+                    rel='noreferrer'
+                    className='inline-flex items-center gap-2.5 text-sm font-medium text-[#F0F9FF] no-underline bg-white/[0.08] border border-white/[0.14] rounded-full px-5 py-3 transition-colors hover:bg-white/[0.14] w-fit'
                   >
-                    <FaVk className="text-[16px] shrink-0" aria-hidden="true" />
+                    <FaVk className='text-[16px] shrink-0' aria-hidden='true' />
                     Сообщество ВКонтакте
                   </a>
                   <button
-                    type="button"
+                    type='button'
                     onClick={openModal}
-                    className="inline-flex items-center gap-2.5 text-sm font-medium text-[#C8EEFF] bg-white/[0.08] border-[1.5px] border-[#C8EEFF]/50 rounded-full px-5 py-3 transition-colors hover:bg-white/[0.14] cursor-pointer w-fit"
+                    className='inline-flex items-center gap-2.5 text-sm font-medium text-[#C8EEFF] bg-white/[0.08] border-[1.5px] border-[#C8EEFF]/50 rounded-full px-5 py-3 transition-colors hover:bg-white/[0.14] cursor-pointer w-fit'
                   >
-                    <span aria-hidden="true">✎</span>
+                    <span aria-hidden='true'>✎</span>
                     Оставить заявку
                   </button>
                 </div>
@@ -774,16 +778,16 @@ export default function App() {
       </main>
 
       {/* FOOTER */}
-      <footer className="border-t border-[rgba(91,168,212,0.18)] py-[22px] md:py-7 px-[18px] md:px-10 flex flex-col md:flex-row gap-1.5 md:gap-0 justify-between items-center text-center md:text-left text-xs text-[#7BAEC9] tracking-[0.06em]">
+      <footer className='border-t border-[rgba(91,168,212,0.18)] py-[22px] md:py-7 px-[18px] md:px-10 flex flex-col md:flex-row gap-1.5 md:gap-0 justify-between items-center text-center md:text-left text-xs text-[#7BAEC9] tracking-[0.06em]'>
         <p>Карина Якимова · Практикующий психолог · Онлайн</p>
-        <p className="text-[11px]">© {new Date().getFullYear()}</p>
+        <p className='text-[11px]'>© {new Date().getFullYear()}</p>
       </footer>
 
       {/* Sticky CTA button */}
       <button
-        type="button"
+        type='button'
         onClick={openModal}
-        aria-label="Записаться на консультацию"
+        aria-label='Записаться на консультацию'
         className={
           "fixed bottom-6 right-6 z-40 inline-flex items-center gap-2.5 bg-[#5BA8D4] text-white font-sans text-[13px] font-medium tracking-[0.05em] pl-5 pr-4 py-3 rounded-full shadow-[0_10px_30px_rgba(91,168,212,0.42)] transition-[opacity,transform,box-shadow] duration-300 hover:bg-[#4A97C3] hover:shadow-[0_14px_38px_rgba(91,168,212,0.52)] hover:-translate-y-0.5 active:translate-y-0 cursor-pointer " +
           (showStickyBtn
@@ -792,7 +796,10 @@ export default function App() {
         }
       >
         Записаться
-        <span aria-hidden="true" className="flex items-center justify-center w-[22px] h-[22px] rounded-full bg-white/20 text-[11px]">
+        <span
+          aria-hidden='true'
+          className='flex items-center justify-center w-[22px] h-[22px] rounded-full bg-white/20 text-[11px]'
+        >
           ↑
         </span>
       </button>
@@ -811,92 +818,92 @@ export default function App() {
         {/* FIX: focus trap через ref, добавлен role=dialog правильно */}
         <div
           ref={modalRef}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modal-title"
+          role='dialog'
+          aria-modal='true'
+          aria-labelledby='modal-title'
           className={
             "relative z-[1] bg-[linear-gradient(180deg,#f5fbff_0%,#deeef9_100%)] border border-[rgba(91,168,212,0.28)] rounded-[24px] p-10 pb-11 w-[min(540px,calc(100vw-36px))] shadow-[0_32px_64px_rgba(30,63,90,0.2)] transition-transform duration-300 " +
             (isModalOpen ? "translate-y-0" : "translate-y-4")
           }
         >
           <button
-            type="button"
-            aria-label="Закрыть форму"
+            type='button'
+            aria-label='Закрыть форму'
             onClick={closeModal}
-            className="absolute top-3.5 right-3.5 w-8 h-8 rounded-full border border-[#A8D4EC]/65 bg-white cursor-pointer text-lg leading-none text-[#2E5F80] flex items-center justify-center transition-colors hover:bg-[#EEF7FC]"
+            className='absolute top-3.5 right-3.5 w-8 h-8 rounded-full border border-[#A8D4EC]/65 bg-white cursor-pointer text-lg leading-none text-[#2E5F80] flex items-center justify-center transition-colors hover:bg-[#EEF7FC]'
           >
             ×
           </button>
 
           <SectionLabel>Обратная связь</SectionLabel>
           <h2
-            id="modal-title"
-            className="font-serif text-4xl font-normal text-[#0F2D45] mt-2.5"
+            id='modal-title'
+            className='font-serif text-4xl font-normal text-[#0F2D45] mt-2.5'
           >
             Оставьте заявку
           </h2>
-          <p className="text-[13px] leading-[1.7] text-[#2E5F80] mt-1.5">
+          <p className='text-[13px] leading-[1.7] text-[#2E5F80] mt-1.5'>
             Укажите имя, контакт и кратко ваш запрос — отвечу после записи.
           </p>
 
           <form onSubmit={handleSubmit} noValidate>
             {/* FIX: поля вынесены из .map() — каждый ref привязан напрямую */}
-            <div className="flex flex-col gap-1.5 mt-[18px]">
+            <div className='flex flex-col gap-1.5 mt-[18px]'>
               <label
-                htmlFor="f-name"
-                className="text-xs font-medium tracking-[0.08em] uppercase text-[#2E5F80]"
+                htmlFor='f-name'
+                className='text-xs font-medium tracking-[0.08em] uppercase text-[#2E5F80]'
               >
                 Имя
               </label>
               <input
-                id="f-name"
+                id='f-name'
                 ref={nameInputRef}
-                type="text"
-                name="name"
+                type='text'
+                name='name'
                 required
-                autoComplete="given-name"
-                placeholder="Ваше имя"
-                className="w-full px-4 py-2.5 border-[1.5px] border-[#A8D4EC]/65 rounded-xl bg-white font-sans text-sm text-[#0F2D45] outline-none transition-[border-color,box-shadow] duration-200 focus:border-[#5BA8D4] focus:shadow-[0_0_0_3px_rgba(91,168,212,0.18)]"
+                autoComplete='given-name'
+                placeholder='Ваше имя'
+                className='w-full px-4 py-2.5 border-[1.5px] border-[#A8D4EC]/65 rounded-xl bg-white font-sans text-sm text-[#0F2D45] outline-none transition-[border-color,box-shadow] duration-200 focus:border-[#5BA8D4] focus:shadow-[0_0_0_3px_rgba(91,168,212,0.18)]'
               />
             </div>
 
-            <div className="flex flex-col gap-1.5 mt-[18px]">
+            <div className='flex flex-col gap-1.5 mt-[18px]'>
               <label
-                htmlFor="f-contact"
-                className="text-xs font-medium tracking-[0.08em] uppercase text-[#2E5F80]"
+                htmlFor='f-contact'
+                className='text-xs font-medium tracking-[0.08em] uppercase text-[#2E5F80]'
               >
                 Контакт
               </label>
               <input
-                id="f-contact"
+                id='f-contact'
                 ref={contactInputRef}
-                type="text"
-                name="contact"
+                type='text'
+                name='contact'
                 required
-                autoComplete="tel"
-                placeholder="Телефон или @username"
-                className="w-full px-4 py-2.5 border-[1.5px] border-[#A8D4EC]/65 rounded-xl bg-white font-sans text-sm text-[#0F2D45] outline-none transition-[border-color,box-shadow] duration-200 focus:border-[#5BA8D4] focus:shadow-[0_0_0_3px_rgba(91,168,212,0.18)]"
+                autoComplete='tel'
+                placeholder='Телефон или @username'
+                className='w-full px-4 py-2.5 border-[1.5px] border-[#A8D4EC]/65 rounded-xl bg-white font-sans text-sm text-[#0F2D45] outline-none transition-[border-color,box-shadow] duration-200 focus:border-[#5BA8D4] focus:shadow-[0_0_0_3px_rgba(91,168,212,0.18)]'
               />
             </div>
 
-            <div className="flex flex-col gap-1.5 mt-[18px]">
+            <div className='flex flex-col gap-1.5 mt-[18px]'>
               <label
-                htmlFor="f-message"
-                className="text-xs font-medium tracking-[0.08em] uppercase text-[#2E5F80]"
+                htmlFor='f-message'
+                className='text-xs font-medium tracking-[0.08em] uppercase text-[#2E5F80]'
               >
                 Сообщение
               </label>
               <textarea
-                id="f-message"
-                name="message"
-                rows="4"
+                id='f-message'
+                name='message'
+                rows='4'
                 required
-                placeholder="Коротко опишите запрос"
-                className="w-full px-4 py-2.5 border-[1.5px] border-[#A8D4EC]/65 rounded-xl bg-white font-sans text-sm text-[#0F2D45] outline-none transition-[border-color,box-shadow] duration-200 resize-y min-h-[100px] focus:border-[#5BA8D4] focus:shadow-[0_0_0_3px_rgba(91,168,212,0.18)]"
+                placeholder='Коротко опишите запрос'
+                className='w-full px-4 py-2.5 border-[1.5px] border-[#A8D4EC]/65 rounded-xl bg-white font-sans text-sm text-[#0F2D45] outline-none transition-[border-color,box-shadow] duration-200 resize-y min-h-[100px] focus:border-[#5BA8D4] focus:shadow-[0_0_0_3px_rgba(91,168,212,0.18)]'
               />
             </div>
 
-            <BtnPrimary type="submit" disabled={isSubmitting} className="mt-5">
+            <BtnPrimary type='submit' disabled={isSubmitting} className='mt-5'>
               {isSubmitting ? "Отправляем…" : "Отправить заявку"}
             </BtnPrimary>
           </form>
