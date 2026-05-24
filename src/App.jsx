@@ -45,6 +45,33 @@ const steps = [
   },
 ];
 
+const moodPhotos = [
+  {
+    src: "photos/photo_2026-05-24_10-31-26.jpg",
+    alt: "Карина в мягком вечернем свете с букетом",
+    className: "sm:col-span-2 sm:row-span-2",
+    imageClassName: "h-[260px] sm:h-full object-[center_24%]",
+  },
+  {
+    src: "photos/meadow.png",
+    alt: "Цветущий луг в тихое утро",
+    className: "",
+    imageClassName: "h-[220px]",
+  },
+  {
+    src: "photos/photo_2026-05-24_11-19-07 (2).jpg",
+    alt: "Мягкий свет и дерево как образ внутреннего диалога",
+    className: "",
+    imageClassName: "h-[220px]",
+  },
+  {
+    src: "photos/photo_2026-05-24_11-19-09 (2).jpg",
+    alt: "Переливающиеся линии в пастельном небе",
+    className: "sm:col-span-2",
+    imageClassName: "h-[220px] object-[center_58%]",
+  },
+];
+
 const asset = (path) => `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
 const telegramUsername = String(import.meta.env.VITE_TELEGRAM_USERNAME || "")
   .trim()
@@ -125,7 +152,7 @@ const SectionLabel = ({ children, className = "" }) => (
 const SectionH2 = ({ children, className = "" }) => (
   <h2
     className={
-      "font-serif font-normal text-[clamp(36px,5vw,58px)] leading-[1.06] text-[#1E3F5A] [&_em]:italic [&_em]:text-[#5BA8D4] " +
+      "font-serif font-semibold text-[clamp(36px,5vw,58px)] leading-[1.06] text-[#0F2D45] [&_em]:italic [&_em]:font-normal [&_em]:text-[#3A93C8] " +
       className
     }
   >
@@ -282,6 +309,7 @@ export default function App() {
               alt="Карина Якимова — практикующий психолог"
               decoding="async"
               className="block h-16 w-auto max-w-full md:h-[90px]"
+              style={{ filter: "hue-rotate(175deg) saturate(0.85) brightness(0.88)" }}
             />
           </a>
 
@@ -299,7 +327,7 @@ export default function App() {
               <a
                 key={href}
                 href={href}
-                className="inline-flex h-11 items-center justify-center rounded-full px-4 xl:px-5 text-[13px] tracking-[0.04em] text-[#4D7A99] no-underline transition-[color,background-color] hover:bg-white/70 hover:text-[#1E3F5A]"
+                className="inline-flex h-11 items-center justify-center rounded-full px-4 xl:px-5 text-[13px] tracking-[0.04em] text-[#2E5F80] no-underline transition-[color,background-color] hover:bg-white/70 hover:text-[#0F2D45]"
               >
                 {label}
               </a>
@@ -320,7 +348,7 @@ export default function App() {
             aria-expanded={isMenuOpen}
             aria-controls="mobile-nav"
             onClick={() => setIsMenuOpen((v) => !v)}
-            className="flex h-[42px] w-[42px] items-center justify-center rounded-lg border-[1.5px] border-[#A8D4EC] bg-transparent text-xl leading-none text-[#1E3F5A] cursor-pointer lg:hidden transition-colors hover:bg-[#EEF7FC]"
+            className="flex h-[42px] w-[42px] items-center justify-center rounded-lg border-[1.5px] border-[#A8D4EC] bg-transparent text-xl leading-none text-[#0F2D45] cursor-pointer lg:hidden transition-colors hover:bg-[#EEF7FC]"
           >
             {isMenuOpen ? "×" : "☰"}
           </button>
@@ -347,7 +375,7 @@ export default function App() {
             <a
               key={href}
               href={href}
-              className="text-[15px] text-[#4D7A99] no-underline hover:text-[#1E3F5A] transition-colors"
+              className="text-[15px] text-[#2E5F80] no-underline hover:text-[#0F2D45] transition-colors"
             >
               {label}
             </a>
@@ -366,15 +394,15 @@ export default function App() {
             className="grid grid-cols-1 md:grid-cols-[1fr_420px] gap-10 md:gap-14 items-center py-[52px] md:py-[80px_70px] [scroll-margin-top:124px]"
           >
             <div data-fade>
-              <p className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.16em] text-[#4D7A99] bg-[#DDF0FA]/95 px-3.5 py-[5px] rounded-full mb-6 before:content-[''] before:w-2 before:h-2 before:rounded-full before:bg-[#7DCAF0] before:animate-pulse before:shadow-[0_0_0_4px_rgba(125,202,240,0.28),0_0_12px_rgba(125,202,240,0.62)] before:shrink-0">
+              <p className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.16em] text-[#2E5F80] bg-[#DDF0FA]/95 px-3.5 py-[5px] rounded-full mb-6 before:content-[''] before:w-2 before:h-2 before:rounded-full before:bg-[#7DCAF0] before:animate-pulse before:shadow-[0_0_0_4px_rgba(125,202,240,0.28),0_0_12px_rgba(125,202,240,0.62)] before:shrink-0">
                 Практикующий психолог
               </p>
-              <h1 className="font-serif font-normal text-[clamp(52px,7vw,88px)] leading-none -tracking-[0.01em] text-[#1E3F5A] [&_em]:italic [&_em]:text-[#5BA8D4]">
+              <h1 className="font-serif font-bold text-[clamp(42px,5.5vw,72px)] leading-[1.1] -tracking-[0.02em] text-[#0F2D45] [&_em]:italic [&_em]:font-normal [&_em]:text-[#3A93C8]">
                 Опора и ясность —<br />
                 <em>шаг за шагом</em>
               </h1>
               {/* FIX: убрана опечатка в конце предложения */}
-              <p className="mt-6 text-base leading-[1.8] text-[#4D7A99] max-w-[44ch]">
+              <p className="mt-6 text-[17px] leading-[1.85] text-[#2C5270] max-w-[44ch]">
                 Меня зовут Карина Якимова. Я практикующий психолог. Помогаю
                 справляться с повседневными трудностями, находить опору и
                 понимать себя.
@@ -398,7 +426,7 @@ export default function App() {
                 ].map((p) => (
                   <li
                     key={p}
-                    className="text-xs text-[#4D7A99] border border-[#A8D4EC]/70 rounded-full px-3.5 py-[5px] bg-white/72"
+                    className="text-xs text-[#2E5F80] border border-[#A8D4EC]/70 rounded-full px-3.5 py-[5px] bg-white/72"
                   >
                     {p}
                   </li>
@@ -415,17 +443,21 @@ export default function App() {
               <div className="relative overflow-visible rounded-[28px] border border-[rgba(91,168,212,0.3)] bg-[linear-gradient(155deg,#f5fbff_0%,#deeef9_46%,#c8e4f5_100%)] shadow-[0_30px_80px_rgba(91,168,212,0.18)] before:absolute before:inset-0 before:rounded-[28px] before:bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.84),transparent_45%)] before:pointer-events-none">
                 <div className="overflow-hidden rounded-t-[28px]">
                   <img
-                    src={asset("photos/yoga-sunrise.png")}
-                    alt="Спокойная утренняя йога на рассвете"
-                    className="block w-full h-[260px] object-cover scale-[1.02] transition-transform duration-[6000ms] hover:scale-[1.06]"
+                    src={asset("photos/photo_2026-05-24_10-31-25.jpg")}
+                    alt="Карина с букетом роз на вечерней прогулке"
+                    className="block w-full h-[320px] object-cover object-[center_28%] scale-[1.02] transition-transform duration-[6000ms] hover:scale-[1.06]"
                   />
                 </div>
                 <div className="px-7 pt-6 pb-7">
                   <SectionLabel>Бережное сопровождение</SectionLabel>
                   <p className="font-serif italic text-[28px] font-normal text-[#4A97C3] leading-[1.35] mt-2.5">
-                    Рядом в комфортном
+                    Спокойное пространство
                     <br />
-                    для Вас темпе
+                    для честного разговора
+                  </p>
+                  <p className="mt-3.5 max-w-[28ch] text-sm leading-[1.75] text-[#2E5F80]">
+                    На сайте оставила более личные и атмосферные кадры, чтобы
+                    пространство ощущалось теплее и живее.
                   </p>
                 </div>
               </div>
@@ -442,18 +474,21 @@ export default function App() {
                 Пространство <em>для Вас</em>
               </SectionH2>
             </div>
-            {/* FIX: добавлены осмысленные alt-тексты к декоративным фото */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-[18px] mt-9">
-              {[
-                ["photos/meadow.png", "Цветущий луг в тихое утро"],
-                ["photos/lake-quote.png", "Спокойное озеро в окружении природы"],
-                ["photos/yoga-sunrise.png", "Практика на рассвете у воды"],
-              ].map(([src, alt], i) => (
-                <div key={src} data-fade data-delay={String(i + 1)}>
+            <div className="grid grid-cols-1 sm:grid-cols-4 auto-rows-auto gap-3.5 sm:gap-[18px] mt-9">
+              {moodPhotos.map((photo, i) => (
+                <div
+                  key={photo.src}
+                  data-fade
+                  data-delay={String(i + 1)}
+                  className={photo.className}
+                >
                   <img
-                    src={asset(src)}
-                    alt={alt}
-                    className="block w-full h-[220px] object-cover rounded-[20px] shadow-[0_18px_45px_rgba(91,168,212,0.18)]"
+                    src={asset(photo.src)}
+                    alt={photo.alt}
+                    className={
+                      "block w-full object-cover rounded-[20px] shadow-[0_18px_45px_rgba(91,168,212,0.18)] " +
+                      photo.imageClassName
+                    }
                   />
                 </div>
               ))}
@@ -493,10 +528,10 @@ export default function App() {
                   <p className="font-serif text-[13px] tracking-[0.18em] text-[#5BA8D4] relative z-10">
                     {item.num}
                   </p>
-                  <h3 className="font-serif text-[26px] font-medium text-[#1E3F5A] mt-2 leading-[1.25] relative z-10">
+                  <h3 className="font-serif text-[26px] font-medium text-[#0F2D45] mt-2 leading-[1.25] relative z-10">
                     {item.title}
                   </h3>
-                  <p className="text-sm leading-[1.75] text-[#4D7A99] mt-3 relative z-10">
+                  <p className="text-sm leading-[1.75] text-[#2E5F80] mt-3 relative z-10">
                     {item.description}
                   </p>
                 </article>
@@ -511,14 +546,26 @@ export default function App() {
 
         {/* PROCESS */}
         <div className="max-w-[1180px] mx-auto px-[18px] md:px-10">
-          <section id="process" className="py-16 [scroll-margin-top:124px]">
-            <div data-fade>
+          <section
+            id="process"
+            className="relative overflow-hidden py-16 px-6 sm:px-8 lg:px-10 rounded-[30px] border border-[rgba(91,168,212,0.22)] bg-[linear-gradient(135deg,rgba(245,251,255,0.96)_0%,rgba(222,238,249,0.94)_58%,rgba(200,228,245,0.9)_100%)] [scroll-margin-top:124px]"
+          >
+            <div
+              aria-hidden="true"
+              className="absolute inset-y-0 right-0 hidden w-[34%] min-w-[260px] bg-cover bg-center opacity-50 md:block"
+              style={{
+                backgroundImage: `linear-gradient(270deg, rgba(220,236,248,0.18) 0%, rgba(220,236,248,0.82) 42%, rgba(220,236,248,0.98) 100%), url("${asset(
+                  "photos/photo_2026-05-24_11-19-07 (2).jpg",
+                )}")`,
+              }}
+            />
+            <div data-fade className="relative z-10 max-w-[760px]">
               <SectionLabel>Процесс</SectionLabel>
               <SectionH2>
                 Как мы будем <em>работать</em>
               </SectionH2>
             </div>
-            <ol className="flex flex-col mt-11 list-none p-0">
+            <ol className="relative z-10 flex flex-col mt-11 list-none p-0 max-w-[760px]">
               {steps.map((step, i) => (
                 <li
                   key={step.title}
@@ -530,10 +577,10 @@ export default function App() {
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <div>
-                    <p className="font-serif text-[22px] font-medium text-[#1E3F5A] mb-2">
+                    <p className="font-serif text-[22px] font-medium text-[#0F2D45] mb-2">
                       {step.title}
                     </p>
-                    <p className="text-[15px] leading-[1.75] text-[#4D7A99]">
+                    <p className="text-[15px] leading-[1.75] text-[#2E5F80]">
                       {step.body}
                     </p>
                   </div>
@@ -551,14 +598,23 @@ export default function App() {
               <SectionH2 className="mb-7">
                 Важно <em>знать</em>
               </SectionH2>
-              <div className="flex flex-col sm:flex-row items-start gap-5 sm:gap-10 p-9 sm:p-[52px_56px] rounded-[24px] border border-[rgba(91,168,212,0.28)] bg-[linear-gradient(130deg,#f5fbff_0%,#deeef9_58%,#c8e4f5_100%)]">
+              <div
+                className="relative isolate overflow-hidden flex flex-col sm:flex-row items-start gap-5 sm:gap-10 p-9 sm:p-[52px_56px] rounded-[24px] border border-[rgba(91,168,212,0.28)] bg-[linear-gradient(130deg,#f5fbff_0%,#deeef9_58%,#c8e4f5_100%)]"
+                style={{
+                  backgroundImage: `linear-gradient(130deg, rgba(245,251,255,0.96) 0%, rgba(222,238,249,0.94) 56%, rgba(200,228,245,0.92) 100%), url("${asset(
+                    "photos/photo_2026-05-24_11-19-09.jpg",
+                  )}")`,
+                  backgroundPosition: "center",
+                  backgroundSize: "cover",
+                }}
+              >
                 <div
                   aria-hidden="true"
-                  className="shrink-0 w-12 h-12 rounded-xl bg-[#5BA8D4] text-white flex items-center justify-center text-[22px]"
+                  className="relative z-10 shrink-0 w-12 h-12 rounded-xl bg-[#5BA8D4] text-white flex items-center justify-center text-[22px]"
                 >
                   ✓
                 </div>
-                <p className="text-base leading-[1.8] text-[#4D7A99] [&_strong]:text-[#1E3F5A] [&_strong]:font-medium">
+                <p className="relative z-10 text-base leading-[1.8] text-[#2E5F80] [&_strong]:text-[#0F2D45] [&_strong]:font-medium">
                   Я сама регулярно прохожу <strong>личную терапию</strong> и
                   работаю с <strong>супервизором</strong> — это моя
                   профессиональная этика и залог качества вашей поддержки.
@@ -590,10 +646,10 @@ export default function App() {
                 <p className="text-xs tracking-[0.12em] uppercase text-[#5BA8D4]">
                   Информация
                 </p>
-                <p className="font-serif text-[52px] font-normal text-[#1E3F5A] leading-none mt-3 mb-1">
+                <p className="font-serif text-[52px] font-normal text-[#0F2D45] leading-none mt-3 mb-1">
                   Оплата
                 </p>
-                <p className="text-sm leading-[1.7] text-[#4D7A99] mt-3.5">
+                <p className="text-sm leading-[1.7] text-[#2E5F80] mt-3.5">
                   Фиксированной стоимости нет — сколько желаете и можете. Оплата
                   производится до начала сессии банковским переводом по номеру
                   телефона или карты. Подробная информация о минимальной
@@ -612,10 +668,10 @@ export default function App() {
                 <p className="text-xs tracking-[0.12em] uppercase text-[#5BA8D4]">
                   Онлайн-запись
                 </p>
-                <p className="font-serif text-[36px] font-normal text-[#1E3F5A] leading-none mt-3.5 mb-1">
+                <p className="font-serif text-[36px] font-normal text-[#0F2D45] leading-none mt-3.5 mb-1">
                   Перейти →
                 </p>
-                <p className="text-sm leading-[1.7] text-[#4D7A99] mt-3.5">
+                <p className="text-sm leading-[1.7] text-[#2E5F80] mt-3.5">
                   Нажмите, чтобы перейти к записи и оплате.
                 </p>
               </a>
@@ -631,7 +687,14 @@ export default function App() {
           >
             <div
               data-fade
-              className="grid grid-cols-1 md:grid-cols-2 gap-9 md:gap-12 items-start bg-[linear-gradient(145deg,#1E4F70_0%,#2B6F96_46%,#5BA8D4_100%)] rounded-[28px] p-9 sm:p-[56px_60px]"
+              className="relative isolate overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-9 md:gap-12 items-start rounded-[28px] p-9 sm:p-[56px_60px]"
+              style={{
+                backgroundImage: `linear-gradient(145deg, rgba(30,79,112,0.95) 0%, rgba(43,111,150,0.92) 44%, rgba(91,168,212,0.84) 100%), url("${asset(
+                  "photos/photo_2026-05-24_11-19-09 (2).jpg",
+                )}")`,
+                backgroundPosition: "center",
+                backgroundSize: "cover",
+              }}
             >
               <div>
                 <div className="mb-3.5 flex items-center gap-3">
@@ -764,7 +827,7 @@ export default function App() {
             type="button"
             aria-label="Закрыть форму"
             onClick={closeModal}
-            className="absolute top-3.5 right-3.5 w-8 h-8 rounded-full border border-[#A8D4EC]/65 bg-white cursor-pointer text-lg leading-none text-[#4D7A99] flex items-center justify-center transition-colors hover:bg-[#EEF7FC]"
+            className="absolute top-3.5 right-3.5 w-8 h-8 rounded-full border border-[#A8D4EC]/65 bg-white cursor-pointer text-lg leading-none text-[#2E5F80] flex items-center justify-center transition-colors hover:bg-[#EEF7FC]"
           >
             ×
           </button>
@@ -772,11 +835,11 @@ export default function App() {
           <SectionLabel>Обратная связь</SectionLabel>
           <h2
             id="modal-title"
-            className="font-serif text-4xl font-normal text-[#1E3F5A] mt-2.5"
+            className="font-serif text-4xl font-normal text-[#0F2D45] mt-2.5"
           >
             Оставьте заявку
           </h2>
-          <p className="text-[13px] leading-[1.7] text-[#4D7A99] mt-1.5">
+          <p className="text-[13px] leading-[1.7] text-[#2E5F80] mt-1.5">
             Укажите имя, контакт и кратко ваш запрос — отвечу после записи.
           </p>
 
@@ -785,7 +848,7 @@ export default function App() {
             <div className="flex flex-col gap-1.5 mt-[18px]">
               <label
                 htmlFor="f-name"
-                className="text-xs font-medium tracking-[0.08em] uppercase text-[#4D7A99]"
+                className="text-xs font-medium tracking-[0.08em] uppercase text-[#2E5F80]"
               >
                 Имя
               </label>
@@ -797,14 +860,14 @@ export default function App() {
                 required
                 autoComplete="given-name"
                 placeholder="Ваше имя"
-                className="w-full px-4 py-2.5 border-[1.5px] border-[#A8D4EC]/65 rounded-xl bg-white font-sans text-sm text-[#1E3F5A] outline-none transition-[border-color,box-shadow] duration-200 focus:border-[#5BA8D4] focus:shadow-[0_0_0_3px_rgba(91,168,212,0.18)]"
+                className="w-full px-4 py-2.5 border-[1.5px] border-[#A8D4EC]/65 rounded-xl bg-white font-sans text-sm text-[#0F2D45] outline-none transition-[border-color,box-shadow] duration-200 focus:border-[#5BA8D4] focus:shadow-[0_0_0_3px_rgba(91,168,212,0.18)]"
               />
             </div>
 
             <div className="flex flex-col gap-1.5 mt-[18px]">
               <label
                 htmlFor="f-contact"
-                className="text-xs font-medium tracking-[0.08em] uppercase text-[#4D7A99]"
+                className="text-xs font-medium tracking-[0.08em] uppercase text-[#2E5F80]"
               >
                 Контакт
               </label>
@@ -816,14 +879,14 @@ export default function App() {
                 required
                 autoComplete="tel"
                 placeholder="Телефон или @username"
-                className="w-full px-4 py-2.5 border-[1.5px] border-[#A8D4EC]/65 rounded-xl bg-white font-sans text-sm text-[#1E3F5A] outline-none transition-[border-color,box-shadow] duration-200 focus:border-[#5BA8D4] focus:shadow-[0_0_0_3px_rgba(91,168,212,0.18)]"
+                className="w-full px-4 py-2.5 border-[1.5px] border-[#A8D4EC]/65 rounded-xl bg-white font-sans text-sm text-[#0F2D45] outline-none transition-[border-color,box-shadow] duration-200 focus:border-[#5BA8D4] focus:shadow-[0_0_0_3px_rgba(91,168,212,0.18)]"
               />
             </div>
 
             <div className="flex flex-col gap-1.5 mt-[18px]">
               <label
                 htmlFor="f-message"
-                className="text-xs font-medium tracking-[0.08em] uppercase text-[#4D7A99]"
+                className="text-xs font-medium tracking-[0.08em] uppercase text-[#2E5F80]"
               >
                 Сообщение
               </label>
@@ -833,7 +896,7 @@ export default function App() {
                 rows="4"
                 required
                 placeholder="Коротко опишите запрос"
-                className="w-full px-4 py-2.5 border-[1.5px] border-[#A8D4EC]/65 rounded-xl bg-white font-sans text-sm text-[#1E3F5A] outline-none transition-[border-color,box-shadow] duration-200 resize-y min-h-[100px] focus:border-[#5BA8D4] focus:shadow-[0_0_0_3px_rgba(91,168,212,0.18)]"
+                className="w-full px-4 py-2.5 border-[1.5px] border-[#A8D4EC]/65 rounded-xl bg-white font-sans text-sm text-[#0F2D45] outline-none transition-[border-color,box-shadow] duration-200 resize-y min-h-[100px] focus:border-[#5BA8D4] focus:shadow-[0_0_0_3px_rgba(91,168,212,0.18)]"
               />
             </div>
 
