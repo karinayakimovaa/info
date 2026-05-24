@@ -145,11 +145,166 @@ function useFocusTrap(isActive) {
   return containerRef;
 }
 
+/* hook: detect scroll for header shadow */
+function useScrolled() {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return scrolled;
+}
+
+/* hook: scroll progress 0–1 */
+function useScrollProgress() {
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    const onScroll = () => {
+      const el = document.documentElement;
+      const scrollable = el.scrollHeight - el.clientHeight;
+      setProgress(
+        scrollable > 0 ? Math.min(window.scrollY / scrollable, 1) : 0,
+      );
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return progress;
+}
+
+/* hook: active nav section id */
+function useActiveSection(ids) {
+  const [active, setActive] = useState("");
+  useEffect(() => {
+    const observers = [];
+    const handler = (id) => (entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) setActive(id);
+      });
+    };
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const io = new IntersectionObserver(handler(id), {
+        rootMargin: "-40% 0px -50% 0px",
+        threshold: 0,
+      });
+      io.observe(el);
+      observers.push(io);
+    });
+    return () => observers.forEach((io) => io.disconnect());
+  }, [ids]);
+  return active;
+}
+
+/* hook: hero entrance animation (fires once on mount) */
+function useHeroReady() {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const t = requestAnimationFrame(() => setTimeout(() => setReady(true), 60));
+    return () => cancelAnimationFrame(t);
+  }, []);
+  return ready;
+}
+
+/* inject global styles once */
+function GlobalStyles() {
+  useEffect(() => {
+    const id = "ky-global-styles";
+    if (document.getElementById(id)) return;
+    const el = document.createElement("style");
+    el.id = id;
+    el.textContent = `
+      @keyframes heroFadeUp {
+        from { opacity: 0; transform: translateY(28px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes heroFadeRight {
+        from { opacity: 0; transform: translateX(24px); }
+        to   { opacity: 1; transform: translateX(0); }
+      }
+      .hero-text-enter {
+        animation: heroFadeUp 0.72s cubic-bezier(0.22,1,0.36,1) both;
+      }
+      .hero-card-enter {
+        animation: heroFadeRight 0.82s cubic-bezier(0.22,1,0.36,1) 0.18s both;
+      }
+      .nav-link-active {
+        color: #0F2D45 !important;
+        font-weight: 600;
+      }
+      .nav-link-active::after {
+        transform: translateX(-50%) scaleX(1) !important;
+      }
+      @keyframes floatTg {
+        0%,100% { transform: translateY(0); }
+        50%      { transform: translateY(-5px); }
+      }
+      .float-tg { animation: floatTg 3s ease-in-out infinite; }
+
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+      }
+      @keyframes pulseRing {
+        0% { box-shadow: 0 0 0 0 rgba(91,168,212,0.55); }
+        70% { box-shadow: 0 0 0 9px rgba(91,168,212,0); }
+        100% { box-shadow: 0 0 0 0 rgba(91,168,212,0); }
+      }
+      @keyframes arrowBounce {
+        0%, 100% { transform: translateX(0); }
+        50% { transform: translateX(4px); }
+      }
+      [data-fade] {
+        opacity: 0;
+        transform: translateY(22px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+      }
+      [data-fade].is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .nav-link {
+        position: relative;
+      }
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%) scaleX(0);
+        width: 16px;
+        height: 1.5px;
+        background: #5BA8D4;
+        border-radius: 2px;
+        transition: transform 0.2s ease;
+      }
+      .nav-link:hover::after {
+        transform: translateX(-50%) scaleX(1);
+      }
+      .pricing-arrow {
+        display: inline-block;
+        transition: transform 0.25s ease;
+      }
+      .pricing-link:hover .pricing-arrow {
+        animation: arrowBounce 0.5s ease infinite;
+      }
+      .sticky-pulse {
+        animation: pulseRing 2.2s ease-out infinite;
+      }
+
+    `;
+    document.head.appendChild(el);
+    return () => el.remove();
+  }, []);
+  return null;
+}
+
 /* reusable atoms */
 const SectionLabel = ({ children, className = "" }) => (
   <p
     className={
-      "inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.2em] text-[#5BA8D4] mb-3.5 before:block before:w-5 before:h-px before:bg-[#5BA8D4] " +
+      "inline-flex items-center gap-2.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#5BA8D4] mb-3.5 before:block before:w-5 before:h-px before:bg-[#5BA8D4] after:block after:w-3 after:h-px after:bg-[#5BA8D4]/50 " +
       className
     }
   >
@@ -172,7 +327,7 @@ const BtnPrimary = ({ className = "", ...props }) => (
   <button
     {...props}
     className={
-      "inline-flex items-center gap-1.5 bg-[#5BA8D4] text-white border-0 cursor-pointer font-sans text-[13px] font-medium tracking-[0.06em] px-6 py-2.5 rounded-full no-underline shadow-[0_10px_28px_rgba(91,168,212,0.28)] transition-[background,transform,box-shadow] duration-200 hover:bg-[#4A97C3] hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(91,168,212,0.38)] active:translate-y-0 disabled:opacity-65 " +
+      "inline-flex items-center gap-1.5 bg-[#5BA8D4] text-white border-0 cursor-pointer font-sans text-[13px] font-semibold tracking-[0.07em] px-6 py-2.5 rounded-full no-underline shadow-[0_10px_28px_rgba(91,168,212,0.32),inset_0_1px_0_rgba(255,255,255,0.18)] transition-[background,transform,box-shadow] duration-200 hover:bg-[#4A97C3] hover:-translate-y-[3px] hover:shadow-[0_16px_36px_rgba(91,168,212,0.42),inset_0_1px_0_rgba(255,255,255,0.18)] active:translate-y-0 active:shadow-[0_6px_18px_rgba(91,168,212,0.28)] disabled:opacity-65 " +
       className
     }
   />
@@ -193,20 +348,25 @@ const Divider = () => (
 export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isInlineSubmitting, setIsInlineSubmitting] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const nameInputRef = useRef(null);
   const contactInputRef = useRef(null);
   const closeTimerRef = useRef(null);
   const headerRef = useRef(null);
-  // BUG FIX 4: ref для кнопки-триггера, чтобы вернуть фокус при закрытии модала
   const triggerRef = useRef(null);
-  // BUG FIX 7: флаг для предотвращения setState на unmounted компоненте
   const isMountedRef = useRef(true);
+
+  const NAV_IDS = ["about", "services", "process", "pricing", "contacts"];
 
   useFadeIn();
   const showStickyBtn = useStickyButton();
   const modalRef = useFocusTrap(isModalOpen);
+  const isScrolled = useScrolled();
+  const scrollProgress = useScrollProgress();
+  const activeSection = useActiveSection(NAV_IDS);
+  const heroReady = useHeroReady();
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -335,12 +495,63 @@ export default function App() {
     }
   };
 
+  const handleInlineSubmit = async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const name = String(fd.get("il-name") || "").trim();
+    const contact = String(fd.get("il-contact") || "").trim();
+    const message = String(fd.get("il-message") || "").trim();
+    if (!name || !contact || !message) {
+      toast.error("Заполните все поля.");
+      return;
+    }
+    setIsInlineSubmitting(true);
+    try {
+      const res = await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          contact,
+          message,
+          page: window.location.href,
+        }),
+      });
+      const result = await res.json().catch(() => ({}));
+      if (!res.ok || result?.ok === false)
+        throw new Error(result.error || "Не удалось отправить.");
+      if (isMountedRef.current) {
+        toast.success("Заявка отправлена");
+        e.target.reset();
+      }
+    } catch (err) {
+      if (isMountedRef.current) toast.error(err?.message || "Ошибка отправки");
+    } finally {
+      if (isMountedRef.current) setIsInlineSubmitting(false);
+    }
+  };
+
   return (
     <>
+      <GlobalStyles />
+
+      {/* SCROLL PROGRESS BAR */}
+      <div
+        aria-hidden='true'
+        className='fixed top-0 left-0 z-[60] h-[2.5px] bg-gradient-to-r from-[#7DCAF0] via-[#5BA8D4] to-[#3A93C8] transition-none origin-left pointer-events-none'
+        style={{
+          width: `${scrollProgress * 100}%`,
+          opacity: scrollProgress > 0.005 ? 1 : 0,
+        }}
+      />
+
       {/* HEADER */}
       <header
         ref={headerRef}
-        className='sticky top-0 z-50 border-b border-[rgba(91,168,212,0.22)] bg-[rgba(240,249,255,0.92)] backdrop-blur-md'
+        className={
+          "sticky top-0 z-50 border-b border-[rgba(91,168,212,0.22)] bg-[rgba(240,249,255,0.94)] backdrop-blur-md transition-shadow duration-300 " +
+          (isScrolled ? "shadow-[0_4px_24px_rgba(91,168,212,0.13)]" : "")
+        }
       >
         <div className='grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-[18px] md:px-10 lg:grid-cols-[auto_minmax(0,1fr)_220px] lg:gap-8'>
           <a
@@ -366,16 +577,21 @@ export default function App() {
             className='hidden lg:flex items-center justify-center gap-1 xl:gap-2'
           >
             {[
-              ["#about", "Обо мне"],
-              ["#services", "Услуги"],
-              ["#process", "Формат"],
-              ["#pricing", "Стоимость"],
-              ["#contacts", "Контакты"],
-            ].map(([href, label]) => (
+              ["about", "Обо мне"],
+              ["services", "Услуги"],
+              ["process", "Формат"],
+              ["pricing", "Стоимость"],
+              ["contacts", "Контакты"],
+            ].map(([id, label]) => (
               <a
-                key={href}
-                href={href}
-                className='inline-flex h-11 items-center justify-center rounded-full px-4 xl:px-5 text-[13px] tracking-[0.04em] text-[#2E5F80] no-underline transition-[color,background-color] hover:bg-white/70 hover:text-[#0F2D45]'
+                key={id}
+                href={`#${id}`}
+                className={
+                  "nav-link inline-flex h-11 items-center justify-center rounded-full px-4 xl:px-5 text-[13px] tracking-[0.04em] no-underline transition-[color] duration-200 " +
+                  (activeSection === id
+                    ? "nav-link-active text-[#0F2D45]"
+                    : "text-[#2E5F80] hover:text-[#0F2D45]")
+                }
               >
                 {label}
               </a>
@@ -442,8 +658,8 @@ export default function App() {
             id='about'
             className='grid grid-cols-1 md:grid-cols-[1fr_420px] gap-10 md:gap-14 items-center py-[52px] md:pt-[80px] md:pb-[70px] [scroll-margin-top:124px]'
           >
-            <div data-fade>
-              <p className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.16em] text-[#2E5F80] bg-[#DDF0FA]/95 px-3.5 py-[5px] rounded-full mb-6 before:content-[''] before:w-2 before:h-2 before:rounded-full before:bg-[#7DCAF0] before:animate-pulse before:shadow-[0_0_0_4px_rgba(125,202,240,0.28),0_0_12px_rgba(125,202,240,0.62)] before:shrink-0">
+            <div className={heroReady ? "hero-text-enter" : "opacity-0"}>
+              <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#2E5F80] bg-[#DDF0FA] border border-[#A8D4EC]/60 px-4 py-[6px] rounded-full mb-6 shadow-[0_2px_10px_rgba(91,168,212,0.12)] before:content-[''] before:w-[7px] before:h-[7px] before:rounded-full before:bg-[#5BA8D4] before:animate-pulse before:shadow-[0_0_0_3px_rgba(91,168,212,0.22),0_0_10px_rgba(91,168,212,0.5)] before:shrink-0">
                 Практикующий психолог
               </p>
               <h1 className='font-serif font-bold text-[clamp(42px,5.5vw,72px)] leading-[1.1] -tracking-[0.02em] text-[#0F2D45] [&_em]:italic [&_em]:font-normal [&_em]:text-[#3A93C8]'>
@@ -461,9 +677,12 @@ export default function App() {
                 </BtnPrimary>
                 <a
                   href='#services'
-                  className='text-[13px] font-medium tracking-[0.04em] text-[#5BA8D4] no-underline border-b border-current pb-px transition-colors hover:text-[#4A97C3]'
+                  className='inline-flex items-center gap-1.5 text-[13px] font-medium tracking-[0.04em] text-[#5BA8D4] no-underline transition-colors hover:text-[#4A97C3] group'
                 >
                   Смотреть услуги
+                  <span className='transition-transform duration-200 group-hover:translate-x-1'>
+                    →
+                  </span>
                 </a>
               </div>
               <ul className='flex gap-2.5 flex-wrap mt-7 list-none p-0'>
@@ -484,9 +703,10 @@ export default function App() {
 
             {/* hero card */}
             <div
-              data-fade
-              data-delay='2'
-              className='animate-[heroFloat_7s_ease-in-out_infinite]'
+              className={
+                "animate-[heroFloat_7s_ease-in-out_infinite] " +
+                (heroReady ? "hero-card-enter" : "opacity-0")
+              }
             >
               <div className='relative overflow-visible rounded-[28px] border border-[rgba(91,168,212,0.3)] bg-[linear-gradient(155deg,#f5fbff_0%,#deeef9_46%,#c8e4f5_100%)] shadow-[0_30px_80px_rgba(91,168,212,0.18)]'>
                 <div className='grid grid-cols-[1.05fr_0.95fr] gap-3 overflow-hidden rounded-t-[28px] p-3 pb-0'>
@@ -614,7 +834,7 @@ export default function App() {
               {services.map((item) => (
                 <article
                   key={item.title}
-                  className='group px-8 pt-8 pb-9 bg-[linear-gradient(180deg,#f5fbff_0%,#deeef9_100%)] transition-colors hover:bg-white relative overflow-hidden'
+                  className='group px-8 pt-8 pb-9 bg-[linear-gradient(180deg,#f5fbff_0%,#eef7fd_100%)] transition-all duration-300 hover:bg-white hover:shadow-[inset_3px_0_0_#5BA8D4] relative overflow-hidden'
                 >
                   <span
                     aria-hidden='true'
@@ -637,21 +857,18 @@ export default function App() {
           </section>
         </div>
 
-        <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
-          <Divider />
-        </div>
-
         {/* PROCESS */}
         <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
           <section
             id='process'
             className='relative overflow-hidden py-16 px-6 sm:px-8 lg:px-10 rounded-[30px] border border-[rgba(91,168,212,0.22)] bg-[linear-gradient(135deg,rgba(245,251,255,0.96)_0%,rgba(222,238,249,0.94)_58%,rgba(200,228,245,0.9)_100%)] [scroll-margin-top:124px]'
           >
+            {/* фото справа — меньше градиента, выше opacity */}
             <div
               aria-hidden='true'
-              className='pointer-events-none absolute inset-y-0 right-0 hidden w-[34%] min-w-[260px] bg-cover bg-center opacity-50 sm:block'
+              className='pointer-events-none absolute inset-y-0 right-0 hidden w-[38%] min-w-[280px] bg-cover bg-[center_20%] opacity-100 sm:block'
               style={{
-                backgroundImage: `linear-gradient(270deg, rgba(220,236,248,0.18) 0%, rgba(220,236,248,0.82) 42%, rgba(220,236,248,0.98) 100%), url("${asset(
+                backgroundImage: `linear-gradient(270deg, rgba(222,238,249,0) 0%, rgba(222,238,249,0.55) 38%, rgba(222,238,249,0.97) 72%), url("${asset(
                   "photos/photo_2026-05-24_11-19-07 (2).jpg",
                 )}")`,
               }}
@@ -662,19 +879,30 @@ export default function App() {
                 Как мы будем <em>работать</em>
               </SectionH2>
             </div>
-            <ol className='relative z-10 flex flex-col mt-11 list-none p-0 max-w-[760px]'>
+            <ol className='relative z-10 flex flex-col mt-11 list-none p-0 max-w-[680px]'>
               {steps.map((step, i) => (
                 <li
                   key={step.title}
                   data-fade
                   data-delay={String(i + 1)}
-                  className='grid grid-cols-[48px_1fr] gap-6 py-7 border-b border-[rgba(91,168,212,0.18)] items-start first:border-t first:border-[rgba(91,168,212,0.18)]'
+                  className='grid grid-cols-[48px_1fr] gap-6 items-start'
                 >
-                  <span className='font-serif text-[40px] font-light text-[#5BA8D4]/25 leading-none'>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <div>
-                    <p className='font-serif text-[22px] font-medium text-[#0F2D45] mb-2'>
+                  {/* левая колонка: кружок + соединительная линия */}
+                  <div className='flex flex-col items-center'>
+                    <span className='flex items-center justify-center w-10 h-10 rounded-full border-[1.5px] border-[rgba(91,168,212,0.4)] bg-white/90 font-serif text-[17px] font-normal text-[#5BA8D4] shadow-[0_2px_12px_rgba(91,168,212,0.14)] leading-none shrink-0 mt-5'>
+                      {String(i + 1)}
+                    </span>
+                    {/* линия между шагами — только не после последнего */}
+                    {i < steps.length - 1 && (
+                      <div
+                        aria-hidden='true'
+                        className='w-px flex-1 min-h-[28px] bg-gradient-to-b from-[rgba(91,168,212,0.3)] to-[rgba(91,168,212,0.08)] my-1'
+                      />
+                    )}
+                  </div>
+                  {/* правая колонка: текст */}
+                  <div className='py-5 border-b border-[rgba(91,168,212,0.15)] last:border-b-0'>
+                    <p className='font-serif text-[22px] font-medium text-[#0F2D45] mb-1.5'>
                       {step.title}
                     </p>
                     <p className='text-[15px] leading-[1.75] text-[#2E5F80]'>
@@ -696,6 +924,11 @@ export default function App() {
                 Важно <em>знать</em>
               </SectionH2>
               <div className='relative isolate overflow-hidden flex flex-col sm:flex-row items-start gap-5 sm:gap-10 p-9 sm:p-[52px_56px] rounded-[24px] border border-[rgba(91,168,212,0.28)] bg-[linear-gradient(130deg,rgba(245,251,255,0.9)_0%,rgba(222,238,249,0.86)_56%,rgba(200,228,245,0.84)_100%)]'>
+                {/* left accent bar */}
+                <div
+                  aria-hidden='true'
+                  className='absolute left-0 inset-y-0 w-[3px] rounded-l-[24px] bg-gradient-to-b from-[#5BA8D4] via-[#7DCAF0] to-[#5BA8D4]/30'
+                />
                 <div
                   aria-hidden='true'
                   className='pointer-events-none absolute inset-0 bg-cover bg-center opacity-[0.3] sm:opacity-[0.22]'
@@ -707,9 +940,23 @@ export default function App() {
                 />
                 <div
                   aria-hidden='true'
-                  className='relative z-10 shrink-0 w-12 h-12 rounded-xl bg-[#5BA8D4] text-white flex items-center justify-center text-[22px]'
+                  className='relative z-10 shrink-0 w-12 h-12 rounded-xl bg-[#5BA8D4] text-white flex items-center justify-center shadow-[0_8px_20px_rgba(91,168,212,0.35)]'
                 >
-                  ✓
+                  <svg
+                    width='22'
+                    height='22'
+                    viewBox='0 0 22 22'
+                    fill='none'
+                    aria-hidden='true'
+                  >
+                    <path
+                      d='M4.5 11.5L9 16L17.5 6'
+                      stroke='white'
+                      strokeWidth='2.2'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                    />
+                  </svg>
                 </div>
                 <p className='relative z-10 text-base leading-[1.8] text-[#2E5F80] [&_strong]:text-[#0F2D45] [&_strong]:font-medium'>
                   Я сама регулярно прохожу <strong>личную терапию</strong> и
@@ -738,9 +985,9 @@ export default function App() {
               <div
                 data-fade
                 data-delay='1'
-                className='bg-[linear-gradient(180deg,#f5fbff_0%,#deeef9_100%)] border-[1.5px] border-[rgba(91,168,212,0.28)] rounded-[20px] p-8 pb-9'
+                className='bg-[linear-gradient(180deg,#f5fbff_0%,#deeef9_100%)] border-[1.5px] border-[rgba(91,168,212,0.28)] border-t-[3px] border-t-[#A8D4EC] rounded-[20px] p-8 pb-9'
               >
-                <p className='text-xs tracking-[0.12em] uppercase text-[#5BA8D4]'>
+                <p className='text-xs tracking-[0.12em] uppercase text-[#5BA8D4] font-semibold'>
                   Информация
                 </p>
                 <p className='font-serif text-[52px] font-normal text-[#0F2D45] leading-none mt-3 mb-1'>
@@ -759,13 +1006,13 @@ export default function App() {
                 rel='noopener noreferrer'
                 data-fade
                 data-delay='2'
-                className='border-[1.5px] border-[rgba(91,168,212,0.28)] rounded-[20px] p-8 pb-9 no-underline text-inherit bg-[linear-gradient(150deg,#f5fbff,#deeef9,#c8e4f5)] transition-shadow hover:shadow-[0_8px_24px_rgba(91,168,212,0.18)]'
+                className='pricing-link group border-[1.5px] border-[rgba(91,168,212,0.28)] border-t-[3px] border-t-[#5BA8D4] rounded-[20px] p-8 pb-9 no-underline text-inherit bg-[linear-gradient(150deg,#f5fbff,#deeef9,#c8e4f5)] transition-all duration-300 hover:shadow-[0_12px_36px_rgba(91,168,212,0.22)] hover:-translate-y-1'
               >
-                <p className='text-xs tracking-[0.12em] uppercase text-[#5BA8D4]'>
+                <p className='text-xs tracking-[0.12em] uppercase text-[#5BA8D4] font-semibold'>
                   Онлайн-запись
                 </p>
                 <p className='font-serif text-[36px] font-normal text-[#0F2D45] leading-none mt-3.5 mb-1'>
-                  Перейти →
+                  Перейти <span className='pricing-arrow'>→</span>
                 </p>
                 <p className='text-sm leading-[1.7] text-[#2E5F80] mt-3.5'>
                   Нажмите, чтобы перейти к записи и оплате.
@@ -879,10 +1126,52 @@ export default function App() {
       </main>
 
       {/* FOOTER */}
-      <footer className='border-t border-[rgba(91,168,212,0.18)] py-[22px] md:py-7 px-[18px] md:px-10 flex flex-col md:flex-row gap-1.5 md:gap-0 justify-between items-center text-center md:text-left text-xs text-[#7BAEC9] tracking-[0.06em]'>
-        <p>Карина Якимова · Практикующий психолог · Онлайн</p>
-        <p className='text-[11px]'>© {new Date().getFullYear()}</p>
+      <footer className='border-t border-[rgba(91,168,212,0.18)] py-6 md:py-8 px-[18px] md:px-10'>
+        <div className='max-w-[1180px] mx-auto flex flex-col md:flex-row gap-4 md:gap-0 justify-between items-center'>
+          <p className='text-xs text-[#7BAEC9] tracking-[0.06em]'>
+            Карина Якимова · Практикующий психолог · Онлайн
+          </p>
+          <div className='flex items-center gap-3'>
+            <a
+              href='https://t.me/krnykmva'
+              target='_blank'
+              rel='noreferrer'
+              aria-label='Telegram-канал'
+              className='flex items-center justify-center w-8 h-8 rounded-full border border-[#A8D4EC]/60 bg-white/60 text-[#5BA8D4] transition-all hover:bg-[#5BA8D4] hover:text-white hover:border-[#5BA8D4] hover:shadow-[0_4px_12px_rgba(91,168,212,0.3)]'
+            >
+              <FaTelegramPlane className='text-[13px]' aria-hidden='true' />
+            </a>
+            <a
+              href='https://vk.ru/krnykmvapsy'
+              target='_blank'
+              rel='noreferrer'
+              aria-label='Сообщество ВКонтакте'
+              className='flex items-center justify-center w-8 h-8 rounded-full border border-[#A8D4EC]/60 bg-white/60 text-[#5BA8D4] transition-all hover:bg-[#5BA8D4] hover:text-white hover:border-[#5BA8D4] hover:shadow-[0_4px_12px_rgba(91,168,212,0.3)]'
+            >
+              <FaVk className='text-[13px]' aria-hidden='true' />
+            </a>
+            <span className='text-[11px] text-[#7BAEC9]/70 tracking-[0.06em] ml-2'>
+              © {new Date().getFullYear()}
+            </span>
+          </div>
+        </div>
       </footer>
+
+      {/* Floating Telegram */}
+      <a
+        href='https://t.me/krnykmva'
+        target='_blank'
+        rel='noreferrer'
+        aria-label='Написать в Telegram'
+        className={
+          "fixed bottom-6 left-6 z-40 float-tg flex items-center justify-center w-[46px] h-[46px] rounded-full bg-[#5BA8D4] text-white shadow-[0_8px_24px_rgba(91,168,212,0.45)] transition-[opacity,transform,box-shadow] duration-300 hover:bg-[#4A97C3] hover:shadow-[0_12px_30px_rgba(91,168,212,0.55)] hover:scale-110 " +
+          (showStickyBtn
+            ? "opacity-100 translate-y-0 pointer-events-auto"
+            : "opacity-0 translate-y-4 pointer-events-none")
+        }
+      >
+        <FaTelegramPlane className='text-[20px]' aria-hidden='true' />
+      </a>
 
       {/* Sticky CTA button */}
       <button
@@ -890,7 +1179,7 @@ export default function App() {
         onClick={openModal}
         aria-label='Записаться на консультацию'
         className={
-          "fixed bottom-6 right-6 z-40 inline-flex items-center gap-2.5 bg-[#5BA8D4] text-white font-sans text-[13px] font-medium tracking-[0.05em] pl-5 pr-4 py-3 rounded-full shadow-[0_10px_30px_rgba(91,168,212,0.42)] transition-[opacity,transform,box-shadow] duration-300 hover:bg-[#4A97C3] hover:shadow-[0_14px_38px_rgba(91,168,212,0.52)] hover:-translate-y-0.5 active:translate-y-0 cursor-pointer " +
+          "fixed bottom-6 right-6 z-40 inline-flex items-center gap-2.5 bg-[#5BA8D4] text-white font-sans text-[13px] font-semibold tracking-[0.05em] pl-5 pr-4 py-3 rounded-full shadow-[0_10px_30px_rgba(91,168,212,0.42)] transition-[opacity,transform,box-shadow] duration-300 hover:bg-[#4A97C3] hover:shadow-[0_14px_38px_rgba(91,168,212,0.52)] hover:-translate-y-0.5 active:translate-y-0 cursor-pointer " +
           (showStickyBtn
             ? "opacity-100 translate-y-0 pointer-events-auto"
             : "opacity-0 translate-y-4 pointer-events-none")
@@ -899,7 +1188,7 @@ export default function App() {
         Записаться
         <span
           aria-hidden='true'
-          className='flex items-center justify-center w-[22px] h-[22px] rounded-full bg-white/20 text-[11px]'
+          className='sticky-pulse flex items-center justify-center w-[22px] h-[22px] rounded-full bg-white/20 text-[11px]'
         >
           ↑
         </span>
@@ -924,90 +1213,106 @@ export default function App() {
           aria-modal='true'
           aria-labelledby='modal-title'
           className={
-            "relative z-[1] bg-[linear-gradient(180deg,#f5fbff_0%,#deeef9_100%)] border border-[rgba(91,168,212,0.28)] rounded-[24px] p-10 pb-11 w-[min(540px,calc(100vw-36px))] shadow-[0_32px_64px_rgba(30,63,90,0.2)] transition-transform duration-300 " +
+            "relative z-[1] bg-[linear-gradient(180deg,#f5fbff_0%,#e8f4fc_100%)] border border-[rgba(91,168,212,0.28)] rounded-[28px] w-[min(540px,calc(100vw-36px))] shadow-[0_40px_80px_rgba(30,63,90,0.22),0_0_0_1px_rgba(91,168,212,0.1)] transition-transform duration-300 overflow-hidden " +
             (isModalOpen ? "translate-y-0" : "translate-y-4")
           }
         >
-          <button
-            type='button'
-            aria-label='Закрыть форму'
-            onClick={closeModal}
-            className='absolute top-3.5 right-3.5 w-8 h-8 rounded-full border border-[#A8D4EC]/65 bg-white cursor-pointer text-lg leading-none text-[#2E5F80] flex items-center justify-center transition-colors hover:bg-[#EEF7FC]'
-          >
-            ×
-          </button>
+          {/* modal accent top bar */}
+          <div
+            aria-hidden='true'
+            className='absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-[#7DCAF0] via-[#5BA8D4] to-[#A8D4EC] rounded-t-[28px]'
+          />
 
-          <SectionLabel>Обратная связь</SectionLabel>
-          <h2
-            id='modal-title'
-            className='font-serif text-4xl font-normal text-[#0F2D45] mt-2.5'
-          >
-            Оставьте заявку
-          </h2>
-          <p className='text-[13px] leading-[1.7] text-[#2E5F80] mt-1.5'>
-            Укажите имя, контакт и кратко ваш запрос — отвечу после записи.
-          </p>
+          <div className='p-10 pb-11 pt-11'>
+            <button
+              type='button'
+              aria-label='Закрыть форму'
+              onClick={closeModal}
+              className='absolute top-4 right-4 w-8 h-8 rounded-full border border-[#A8D4EC]/65 bg-white/80 cursor-pointer text-lg leading-none text-[#5BA8D4] flex items-center justify-center transition-all hover:bg-[#5BA8D4] hover:text-white hover:border-[#5BA8D4] hover:rotate-90 duration-200'
+            >
+              ×
+            </button>
 
-          <form onSubmit={handleSubmit} noValidate>
-            <div className='flex flex-col gap-1.5 mt-[18px]'>
-              <label
-                htmlFor='f-name'
-                className='text-xs font-medium tracking-[0.08em] uppercase text-[#2E5F80]'
+            <SectionLabel>Обратная связь</SectionLabel>
+            <h2
+              id='modal-title'
+              className='font-serif text-4xl font-normal text-[#0F2D45] mt-2.5'
+            >
+              Оставьте заявку
+            </h2>
+            <p className='text-[13px] leading-[1.7] text-[#2E5F80] mt-1.5'>
+              Укажите имя, контакт и кратко ваш запрос — отвечу после записи.
+            </p>
+
+            <form
+              onSubmit={handleSubmit}
+              noValidate
+              className='mt-5 flex flex-col gap-4'
+            >
+              <div className='flex flex-col gap-1.5'>
+                <label
+                  htmlFor='f-name'
+                  className='text-xs font-semibold tracking-[0.1em] uppercase text-[#5BA8D4]'
+                >
+                  Имя
+                </label>
+                <input
+                  id='f-name'
+                  ref={nameInputRef}
+                  type='text'
+                  name='name'
+                  required
+                  autoComplete='given-name'
+                  placeholder='Ваше имя'
+                  className='w-full px-4 py-3 border-[1.5px] border-[#A8D4EC]/65 rounded-xl bg-white font-sans text-sm text-[#0F2D45] outline-none transition-[border-color,box-shadow] duration-200 focus:border-[#5BA8D4] focus:shadow-[0_0_0_3px_rgba(91,168,212,0.15)] placeholder:text-[#9BBFD6]'
+                />
+              </div>
+
+              <div className='flex flex-col gap-1.5'>
+                <label
+                  htmlFor='f-contact'
+                  className='text-xs font-semibold tracking-[0.1em] uppercase text-[#5BA8D4]'
+                >
+                  Контакт
+                </label>
+                <input
+                  id='f-contact'
+                  ref={contactInputRef}
+                  type='text'
+                  name='contact'
+                  required
+                  autoComplete='tel'
+                  placeholder='Телефон или @username'
+                  className='w-full px-4 py-3 border-[1.5px] border-[#A8D4EC]/65 rounded-xl bg-white font-sans text-sm text-[#0F2D45] outline-none transition-[border-color,box-shadow] duration-200 focus:border-[#5BA8D4] focus:shadow-[0_0_0_3px_rgba(91,168,212,0.15)] placeholder:text-[#9BBFD6]'
+                />
+              </div>
+
+              <div className='flex flex-col gap-1.5'>
+                <label
+                  htmlFor='f-message'
+                  className='text-xs font-semibold tracking-[0.1em] uppercase text-[#5BA8D4]'
+                >
+                  Сообщение
+                </label>
+                <textarea
+                  id='f-message'
+                  name='message'
+                  rows='4'
+                  required
+                  placeholder='Коротко опишите запрос'
+                  className='w-full px-4 py-3 border-[1.5px] border-[#A8D4EC]/65 rounded-xl bg-white font-sans text-sm text-[#0F2D45] outline-none transition-[border-color,box-shadow] duration-200 resize-y min-h-[100px] focus:border-[#5BA8D4] focus:shadow-[0_0_0_3px_rgba(91,168,212,0.15)] placeholder:text-[#9BBFD6]'
+                />
+              </div>
+
+              <BtnPrimary
+                type='submit'
+                disabled={isSubmitting}
+                className='mt-1 self-start'
               >
-                Имя
-              </label>
-              <input
-                id='f-name'
-                ref={nameInputRef}
-                type='text'
-                name='name'
-                required
-                autoComplete='given-name'
-                placeholder='Ваше имя'
-                className='w-full px-4 py-2.5 border-[1.5px] border-[#A8D4EC]/65 rounded-xl bg-white font-sans text-sm text-[#0F2D45] outline-none transition-[border-color,box-shadow] duration-200 focus:border-[#5BA8D4] focus:shadow-[0_0_0_3px_rgba(91,168,212,0.18)]'
-              />
-            </div>
-
-            <div className='flex flex-col gap-1.5 mt-[18px]'>
-              <label
-                htmlFor='f-contact'
-                className='text-xs font-medium tracking-[0.08em] uppercase text-[#2E5F80]'
-              >
-                Контакт
-              </label>
-              <input
-                id='f-contact'
-                ref={contactInputRef}
-                type='text'
-                name='contact'
-                required
-                autoComplete='tel'
-                placeholder='Телефон или @username'
-                className='w-full px-4 py-2.5 border-[1.5px] border-[#A8D4EC]/65 rounded-xl bg-white font-sans text-sm text-[#0F2D45] outline-none transition-[border-color,box-shadow] duration-200 focus:border-[#5BA8D4] focus:shadow-[0_0_0_3px_rgba(91,168,212,0.18)]'
-              />
-            </div>
-
-            <div className='flex flex-col gap-1.5 mt-[18px]'>
-              <label
-                htmlFor='f-message'
-                className='text-xs font-medium tracking-[0.08em] uppercase text-[#2E5F80]'
-              >
-                Сообщение
-              </label>
-              <textarea
-                id='f-message'
-                name='message'
-                rows='4'
-                required
-                placeholder='Коротко опишите запрос'
-                className='w-full px-4 py-2.5 border-[1.5px] border-[#A8D4EC]/65 rounded-xl bg-white font-sans text-sm text-[#0F2D45] outline-none transition-[border-color,box-shadow] duration-200 resize-y min-h-[100px] focus:border-[#5BA8D4] focus:shadow-[0_0_0_3px_rgba(91,168,212,0.18)]'
-              />
-            </div>
-
-            <BtnPrimary type='submit' disabled={isSubmitting} className='mt-5'>
-              {isSubmitting ? "Отправляем…" : "Отправить заявку"}
-            </BtnPrimary>
-          </form>
+                {isSubmitting ? "Отправляем…" : "Отправить заявку"}
+              </BtnPrimary>
+            </form>
+          </div>
         </div>
       </div>
     </>
