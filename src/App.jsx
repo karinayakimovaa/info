@@ -47,37 +47,40 @@ const steps = [
 
 const moodPhotos = [
   {
-    src: "photos/photo_2026-05-24_10-31-26.jpg",
-    alt: "Карина в мягком вечернем свете с букетом",
-    className: "sm:col-span-2 sm:row-span-2",
-    imageClassName: "h-[260px] sm:h-full object-[center_24%]",
+    src: "photos/photo_2026-05-24_11-19-10.jpg",
+    alt: "Светящийся силуэт как образ внутренней опоры",
+    imageClassName: "object-[center_36%]",
   },
   {
-    src: "photos/meadow.png",
-    alt: "Цветущий луг в тихое утро",
-    className: "",
-    imageClassName: "h-[220px]",
+    src: "photos/photo_2026-05-24_11-19-07.jpg",
+    alt: "Пастельная медитативная фигура в мягком свечении",
+    imageClassName: "object-[center_36%]",
   },
   {
     src: "photos/photo_2026-05-24_11-19-07 (2).jpg",
     alt: "Мягкий свет и дерево как образ внутреннего диалога",
-    className: "",
-    imageClassName: "h-[220px]",
+    imageClassName: "",
   },
   {
     src: "photos/photo_2026-05-24_11-19-09 (2).jpg",
     alt: "Переливающиеся линии в пастельном небе",
-    className: "sm:col-span-2",
-    imageClassName: "h-[220px] object-[center_58%]",
+    imageClassName: "object-[center_58%]",
   },
 ];
+
+const [
+  featuredMoodPhoto,
+  meditativeMoodPhoto,
+  dialogueMoodPhoto,
+  flowMoodPhoto,
+] = moodPhotos;
 
 const asset = (path) => `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
 const telegramUsername = String(import.meta.env.VITE_TELEGRAM_USERNAME || "")
   .trim()
   .replace(/^@+/, "");
 
-/* tiny hook: fade-in on scroll */
+/* tiny hook: fade-in on scroll с поддержкой data-delay */
 function useFadeIn() {
   useEffect(() => {
     const els = document.querySelectorAll("[data-fade]");
@@ -85,6 +88,11 @@ function useFadeIn() {
       (entries) =>
         entries.forEach((e) => {
           if (e.isIntersecting) {
+            // BUG FIX 1: применяем data-delay как CSS transition-delay
+            const delay = e.target.dataset.delay;
+            if (delay) {
+              e.target.style.transitionDelay = `${Number(delay) * 80}ms`;
+            }
             e.target.classList.add("is-visible");
             io.unobserve(e.target);
           }
@@ -187,30 +195,59 @@ export default function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // FIX: отдельные ref-ы для каждого поля формы, не через .map()
   const nameInputRef = useRef(null);
   const contactInputRef = useRef(null);
   const closeTimerRef = useRef(null);
   const headerRef = useRef(null);
+  // BUG FIX 4: ref для кнопки-триггера, чтобы вернуть фокус при закрытии модала
+  const triggerRef = useRef(null);
+  // BUG FIX 7: флаг для предотвращения setState на unmounted компоненте
+  const isMountedRef = useRef(true);
 
   useFadeIn();
   const showStickyBtn = useStickyButton();
   const modalRef = useFocusTrap(isModalOpen);
 
-  const closeModal = useCallback(() => setIsModalOpen(false), []);
-  const openModal = () => setIsModalOpen(true);
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false);
+    // BUG FIX 4: возвращаем фокус на кнопку-триггер при закрытии
+    setTimeout(() => triggerRef.current?.focus(), 50);
+  }, []);
+
+  const openModal = (e) => {
+    // BUG FIX 4: запоминаем элемент, с которого открыли модал
+    if (e?.currentTarget) triggerRef.current = e.currentTarget;
+    setIsModalOpen(true);
+  };
+
+  /* BUG FIX 10: сброс мобильного меню при resize до desktop */
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth >= 1024) setIsMenuOpen(false);
+    };
+    window.addEventListener("resize", onResize, { passive: true });
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   /* lock scroll when modal open */
   useEffect(() => {
     if (isModalOpen) {
       const scrollY = window.scrollY;
       document.body.style.cssText = `overflow:hidden;position:fixed;top:-${scrollY}px;width:100%`;
-      // небольшая задержка чтобы DOM успел отрисоваться
       setTimeout(() => nameInputRef.current?.focus(), 50);
     } else {
-      const scrollY = document.body.style.top;
+      // BUG FIX 12: безопасный parseInt с fallback на 0
+      const topValue = document.body.style.top;
+      const scrollY = topValue ? parseInt(topValue, 10) * -1 : 0;
       document.body.style.cssText = "";
-      if (scrollY) window.scrollTo(0, parseInt(scrollY) * -1);
+      if (topValue) window.scrollTo(0, scrollY);
     }
     return () => (document.body.style.cssText = "");
   }, [isModalOpen]);
@@ -279,13 +316,22 @@ export default function App() {
         throw new Error(result.error || "Не удалось отправить заявку.");
       }
 
-      toast.success("Заявка отправлена");
-      e.target.reset();
-      closeTimerRef.current = setTimeout(closeModal, 600);
+      // BUG FIX 7: проверяем mounted перед setState
+      if (isMountedRef.current) {
+        toast.success("Заявка отправлена");
+        e.target.reset();
+        closeTimerRef.current = setTimeout(() => {
+          if (isMountedRef.current) closeModal();
+        }, 600);
+      }
     } catch (error) {
-      toast.error(error?.message || "Ошибка отправки");
+      if (isMountedRef.current) {
+        toast.error(error?.message || "Ошибка отправки");
+      }
     } finally {
-      setIsSubmitting(false);
+      if (isMountedRef.current) {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -357,7 +403,7 @@ export default function App() {
         </div>
       </header>
 
-      {/* mobile nav — FIX: анимация появления через transition + CSS-класс */}
+      {/* mobile nav */}
       <div
         id='mobile-nav'
         aria-hidden={!isMenuOpen}
@@ -391,9 +437,10 @@ export default function App() {
       <main>
         {/* HERO */}
         <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
+          {/* md:py-[80px_70px] заменено на раздельные pt/pb, потому что такой Tailwind-класс невалиден */}
           <section
             id='about'
-            className='grid grid-cols-1 md:grid-cols-[1fr_420px] gap-10 md:gap-14 items-center py-[52px] md:py-[80px_70px] [scroll-margin-top:124px]'
+            className='grid grid-cols-1 md:grid-cols-[1fr_420px] gap-10 md:gap-14 items-center py-[52px] md:pt-[80px] md:pb-[70px] [scroll-margin-top:124px]'
           >
             <div data-fade>
               <p className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.16em] text-[#2E5F80] bg-[#DDF0FA]/95 px-3.5 py-[5px] rounded-full mb-6 before:content-[''] before:w-2 before:h-2 before:rounded-full before:bg-[#7DCAF0] before:animate-pulse before:shadow-[0_0_0_4px_rgba(125,202,240,0.28),0_0_12px_rgba(125,202,240,0.62)] before:shrink-0">
@@ -403,7 +450,6 @@ export default function App() {
                 Опора и ясность —<br />
                 <em>шаг за шагом</em>
               </h1>
-              {/* FIX: убрана опечатка в конце предложения */}
               <p className='mt-6 text-[17px] leading-[1.85] text-[#2C5270] max-w-[44ch]'>
                 Меня зовут Карина Якимова. Я практикующий психолог. Помогаю
                 справляться с повседневными трудностями, находить опору и
@@ -428,7 +474,7 @@ export default function App() {
                 ].map((p) => (
                   <li
                     key={p}
-                    className='text-xs text-[#2E5F80] border border-[#A8D4EC]/70 rounded-full px-3.5 py-[5px] bg-white/72'
+                    className='text-xs text-[#2E5F80] border border-[#A8D4EC]/70 rounded-full px-3.5 py-[5px] bg-white/[0.72]'
                   >
                     {p}
                   </li>
@@ -442,13 +488,22 @@ export default function App() {
               data-delay='2'
               className='animate-[heroFloat_7s_ease-in-out_infinite]'
             >
-              <div className='relative overflow-visible rounded-[28px] border border-[rgba(91,168,212,0.3)] bg-[linear-gradient(155deg,#f5fbff_0%,#deeef9_46%,#c8e4f5_100%)] shadow-[0_30px_80px_rgba(91,168,212,0.18)] before:absolute before:inset-0 before:rounded-[28px] before:bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.84),transparent_45%)] before:pointer-events-none'>
-                <div className='overflow-hidden rounded-t-[28px]'>
-                  <img
-                    src={asset("photos/photo_2026-05-24_10-31-25.jpg")}
-                    alt='Карина с букетом роз на вечерней прогулке'
-                    className='block w-full h-[320px] object-cover object-[center_28%] scale-[1.02] transition-transform duration-[6000ms] hover:scale-[1.06]'
-                  />
+              <div className='relative overflow-visible rounded-[28px] border border-[rgba(91,168,212,0.3)] bg-[linear-gradient(155deg,#f5fbff_0%,#deeef9_46%,#c8e4f5_100%)] shadow-[0_30px_80px_rgba(91,168,212,0.18)]'>
+                <div className='grid grid-cols-[1.05fr_0.95fr] gap-3 overflow-hidden rounded-t-[28px] p-3 pb-0'>
+                  <div className='overflow-hidden rounded-[22px] shadow-[0_18px_45px_rgba(91,168,212,0.16)]'>
+                    <img
+                      src={asset("photos/photo_2026-05-24_10-31-25.jpg")}
+                      alt='Карина с букетом роз на вечерней прогулке'
+                      className='block h-[280px] w-full object-cover object-[center_28%] transition-transform duration-[6000ms] hover:scale-[1.06] md:h-[320px]'
+                    />
+                  </div>
+                  <div className='overflow-hidden rounded-[22px] shadow-[0_18px_45px_rgba(91,168,212,0.16)]'>
+                    <img
+                      src={asset("photos/photo_2026-05-24_10-31-26.jpg")}
+                      alt='Карина с букетом гортензий в тёплом вечернем свете'
+                      className='block h-[280px] w-full object-cover object-[58%_center] transition-transform duration-[6000ms] hover:scale-[1.06] md:h-[320px]'
+                    />
+                  </div>
                 </div>
                 <div className='px-7 pt-6 pb-7'>
                   <SectionLabel>Бережное сопровождение</SectionLabel>
@@ -472,24 +527,68 @@ export default function App() {
                 Пространство <em>для Вас</em>
               </SectionH2>
             </div>
-            <div className='grid grid-cols-1 sm:grid-cols-4 auto-rows-auto gap-3.5 sm:gap-[18px] mt-9'>
-              {moodPhotos.map((photo, i) => (
+            <div className='mt-9 grid grid-cols-1 gap-3.5 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-[18px]'>
+              <div
+                data-fade
+                data-delay='1'
+                className='overflow-hidden rounded-[24px] shadow-[0_24px_56px_rgba(91,168,212,0.18)]'
+              >
+                <img
+                  src={asset(featuredMoodPhoto.src)}
+                  alt={featuredMoodPhoto.alt}
+                  className={
+                    "block h-[360px] w-full object-cover sm:h-[520px] lg:h-[680px] " +
+                    featuredMoodPhoto.imageClassName
+                  }
+                />
+              </div>
+
+              <div className='grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-2 lg:grid-rows-[240px_1fr] lg:gap-[18px]'>
                 <div
-                  key={photo.src}
                   data-fade
-                  data-delay={String(i + 1)}
-                  className={photo.className}
+                  data-delay='2'
+                  className='overflow-hidden rounded-[24px] shadow-[0_18px_45px_rgba(91,168,212,0.16)]'
                 >
                   <img
-                    src={asset(photo.src)}
-                    alt={photo.alt}
+                    src={asset(meditativeMoodPhoto.src)}
+                    alt={meditativeMoodPhoto.alt}
                     className={
-                      "block w-full object-cover rounded-[20px] shadow-[0_18px_45px_rgba(91,168,212,0.18)] " +
-                      photo.imageClassName
+                      "block h-[240px] w-full object-cover " +
+                      meditativeMoodPhoto.imageClassName
                     }
                   />
                 </div>
-              ))}
+
+                <div
+                  data-fade
+                  data-delay='3'
+                  className='overflow-hidden rounded-[24px] shadow-[0_18px_45px_rgba(91,168,212,0.16)]'
+                >
+                  <img
+                    src={asset(dialogueMoodPhoto.src)}
+                    alt={dialogueMoodPhoto.alt}
+                    className={
+                      "block h-[240px] w-full object-cover " +
+                      dialogueMoodPhoto.imageClassName
+                    }
+                  />
+                </div>
+
+                <div
+                  data-fade
+                  data-delay='4'
+                  className='overflow-hidden rounded-[24px] shadow-[0_20px_50px_rgba(91,168,212,0.16)] sm:col-span-2'
+                >
+                  <img
+                    src={asset(flowMoodPhoto.src)}
+                    alt={flowMoodPhoto.alt}
+                    className={
+                      "block h-[220px] w-full object-cover sm:h-[250px] lg:h-[422px] " +
+                      flowMoodPhoto.imageClassName
+                    }
+                  />
+                </div>
+              </div>
             </div>
           </section>
         </div>
@@ -550,7 +649,16 @@ export default function App() {
           >
             <div
               aria-hidden='true'
-              className='absolute inset-y-0 right-0 hidden w-[34%] min-w-[260px] bg-cover bg-center opacity-50 md:block'
+              className='pointer-events-none absolute inset-x-0 bottom-0 h-[38%] bg-cover bg-center opacity-30 sm:hidden'
+              style={{
+                backgroundImage: `linear-gradient(180deg, rgba(220,236,248,0) 0%, rgba(220,236,248,0.18) 28%, rgba(220,236,248,0.76) 100%), url("${asset(
+                  "photos/photo_2026-05-24_11-19-07 (2).jpg",
+                )}")`,
+              }}
+            />
+            <div
+              aria-hidden='true'
+              className='pointer-events-none absolute inset-y-0 right-0 hidden w-[34%] min-w-[260px] bg-cover bg-center opacity-50 sm:block'
               style={{
                 backgroundImage: `linear-gradient(270deg, rgba(220,236,248,0.18) 0%, rgba(220,236,248,0.82) 42%, rgba(220,236,248,0.98) 100%), url("${asset(
                   "photos/photo_2026-05-24_11-19-07 (2).jpg",
@@ -597,15 +705,17 @@ export default function App() {
                 Важно <em>знать</em>
               </SectionH2>
               <div
-                className='relative isolate overflow-hidden flex flex-col sm:flex-row items-start gap-5 sm:gap-10 p-9 sm:p-[52px_56px] rounded-[24px] border border-[rgba(91,168,212,0.28)] bg-[linear-gradient(130deg,#f5fbff_0%,#deeef9_58%,#c8e4f5_100%)]'
-                style={{
-                  backgroundImage: `linear-gradient(130deg, rgba(245,251,255,0.96) 0%, rgba(222,238,249,0.94) 56%, rgba(200,228,245,0.92) 100%), url("${asset(
-                    "photos/photo_2026-05-24_11-19-09.jpg",
-                  )}")`,
-                  backgroundPosition: "center",
-                  backgroundSize: "cover",
-                }}
+                className='relative isolate overflow-hidden flex flex-col sm:flex-row items-start gap-5 sm:gap-10 p-9 sm:p-[52px_56px] rounded-[24px] border border-[rgba(91,168,212,0.28)] bg-[linear-gradient(130deg,rgba(245,251,255,0.9)_0%,rgba(222,238,249,0.86)_56%,rgba(200,228,245,0.84)_100%)]'
               >
+                <div
+                  aria-hidden='true'
+                  className='pointer-events-none absolute inset-0 bg-cover bg-center opacity-[0.3] sm:opacity-[0.22]'
+                  style={{
+                    backgroundImage: `url("${asset(
+                      "photos/photo_2026-05-24_11-19-09.jpg",
+                    )}")`,
+                  }}
+                />
                 <div
                   aria-hidden='true'
                   className='relative z-10 shrink-0 w-12 h-12 rounded-xl bg-[#5BA8D4] text-white flex items-center justify-center text-[22px]'
@@ -684,45 +794,47 @@ export default function App() {
           >
             <div
               data-fade
-              className='relative isolate overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-9 md:gap-12 items-start rounded-[28px] p-9 sm:p-[56px_60px]'
-              style={{
-                backgroundImage: `linear-gradient(145deg, rgba(30,79,112,0.95) 0%, rgba(43,111,150,0.92) 44%, rgba(91,168,212,0.84) 100%), url("${asset(
-                  "photos/photo_2026-05-24_11-19-09 (2).jpg",
-                )}")`,
-                backgroundPosition: "center",
-                backgroundSize: "cover",
-              }}
+              className='relative isolate overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-9 md:gap-12 items-start rounded-[28px] p-9 sm:p-[56px_60px] bg-[linear-gradient(145deg,rgba(30,79,112,0.9)_0%,rgba(43,111,150,0.86)_44%,rgba(91,168,212,0.74)_100%)]'
             >
+              <div
+                aria-hidden='true'
+                className='pointer-events-none absolute inset-0 bg-cover bg-center opacity-[0.3] sm:opacity-[0.22]'
+                style={{
+                  backgroundImage: `url("${asset(
+                    "photos/photo_2026-05-24_11-19-09 (2).jpg",
+                  )}")`,
+                }}
+              />
               <div>
                 <div className='mb-3.5 flex items-center gap-3'>
-                  <p className='inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.2em] text-[#B8DFF5]/50 before:block before:w-5 before:h-px before:bg-[#B8DFF5]/40'>
+                  <p className='inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.2em] text-[#E8F7FF]/80 [text-shadow:0_1px_12px_rgba(15,45,69,0.28)] before:block before:w-5 before:h-px before:bg-[#E8F7FF]/70'>
                     Контакты
                   </p>
                   <span
                     aria-hidden='true'
-                    className='grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-white/10 text-lg'
+                    className='grid h-9 w-9 place-items-center rounded-full border border-white/25 bg-white/14 text-lg shadow-[0_10px_24px_rgba(12,39,62,0.18)]'
                   >
                     🌿
                   </span>
                 </div>
-                <h2 className='font-serif font-normal text-[clamp(32px,4.5vw,52px)] leading-[1.08] text-[#F0F9FF] [&_em]:italic [&_em]:text-[#C8EEFF]'>
+                <h2 className='font-serif font-normal text-[clamp(32px,4.5vw,52px)] leading-[1.08] text-white [text-shadow:0_3px_24px_rgba(15,45,69,0.26)] [&_em]:italic [&_em]:text-[#F2FBFF]'>
                   Записаться
                   <br />
                   или <em>задать вопрос</em>
                 </h2>
-                <p className='text-[15px] leading-[1.8] text-[#B8DFF5]/70 mt-4'>
+                <p className='mt-4 text-[15px] leading-[1.8] text-[#EAF7FF]/92 [text-shadow:0_2px_16px_rgba(15,45,69,0.22)]'>
                   Напишите примерный запрос — обсудим формат и сможем ли
                   поработать вместе.
                 </p>
               </div>
               <div>
-                <p className='text-xs tracking-[0.14em] uppercase text-[#B8DFF5]/50 mb-3.5'>
+                <p className='mb-3.5 text-xs tracking-[0.14em] uppercase text-[#E8F7FF]/80 [text-shadow:0_1px_12px_rgba(15,45,69,0.28)]'>
                   Связаться
                 </p>
                 <div className='flex flex-col gap-3.5'>
                   <a
                     href={`tel:${phoneTel}`}
-                    className='inline-flex items-center gap-2.5 text-sm font-medium text-[#F0F9FF] no-underline bg-white/[0.08] border border-white/[0.14] rounded-full px-5 py-3 transition-colors hover:bg-white/[0.14] cursor-pointer w-fit'
+                    className='inline-flex items-center gap-2.5 text-sm font-medium text-white no-underline bg-white/[0.14] border border-white/[0.24] rounded-full px-5 py-3 shadow-[0_10px_24px_rgba(15,45,69,0.14)] transition-colors hover:bg-white/[0.2] cursor-pointer w-fit'
                   >
                     <span aria-hidden='true'>☏</span>
                     <span>Телефон:</span> {phoneDisplay}
@@ -732,12 +844,12 @@ export default function App() {
                       href={`https://t.me/${telegramUsername}`}
                       target='_blank'
                       rel='noreferrer'
-                      className='inline-flex items-center gap-2.5 text-sm font-medium text-[#F0F9FF] no-underline bg-white/[0.08] border border-white/[0.14] rounded-full px-5 py-3 transition-colors hover:bg-white/[0.14] w-fit'
+                      className='inline-flex items-center gap-2.5 text-sm font-medium text-white no-underline bg-white/[0.14] border border-white/[0.24] rounded-full px-5 py-3 shadow-[0_10px_24px_rgba(15,45,69,0.14)] transition-colors hover:bg-white/[0.2] w-fit'
                     >
                       <span>Telegram:</span> @{telegramUsername}
                     </a>
                   ) : (
-                    <span className='text-[13px] text-[#B8DFF5]/55'>
+                    <span className='text-[13px] text-[#EAF7FF]/82 [text-shadow:0_1px_12px_rgba(15,45,69,0.24)]'>
                       Telegram — по этому же номеру.
                     </span>
                   )}
@@ -745,7 +857,7 @@ export default function App() {
                     href='https://t.me/krnykmva'
                     target='_blank'
                     rel='noreferrer'
-                    className='inline-flex items-center gap-2.5 text-sm font-medium text-[#F0F9FF] no-underline bg-white/[0.08] border border-white/[0.14] rounded-full px-5 py-3 transition-colors hover:bg-white/[0.14] w-fit'
+                    className='inline-flex items-center gap-2.5 text-sm font-medium text-white no-underline bg-white/[0.14] border border-white/[0.24] rounded-full px-5 py-3 shadow-[0_10px_24px_rgba(15,45,69,0.14)] transition-colors hover:bg-white/[0.2] w-fit'
                   >
                     <FaTelegramPlane
                       className='text-[16px] shrink-0'
@@ -757,7 +869,7 @@ export default function App() {
                     href='https://vk.ru/krnykmvapsy'
                     target='_blank'
                     rel='noreferrer'
-                    className='inline-flex items-center gap-2.5 text-sm font-medium text-[#F0F9FF] no-underline bg-white/[0.08] border border-white/[0.14] rounded-full px-5 py-3 transition-colors hover:bg-white/[0.14] w-fit'
+                    className='inline-flex items-center gap-2.5 text-sm font-medium text-white no-underline bg-white/[0.14] border border-white/[0.24] rounded-full px-5 py-3 shadow-[0_10px_24px_rgba(15,45,69,0.14)] transition-colors hover:bg-white/[0.2] w-fit'
                   >
                     <FaVk className='text-[16px] shrink-0' aria-hidden='true' />
                     Сообщество ВКонтакте
@@ -765,7 +877,7 @@ export default function App() {
                   <button
                     type='button'
                     onClick={openModal}
-                    className='inline-flex items-center gap-2.5 text-sm font-medium text-[#C8EEFF] bg-white/[0.08] border-[1.5px] border-[#C8EEFF]/50 rounded-full px-5 py-3 transition-colors hover:bg-white/[0.14] cursor-pointer w-fit'
+                    className='inline-flex items-center gap-2.5 text-sm font-medium text-white bg-white/[0.16] border-[1.5px] border-white/[0.34] rounded-full px-5 py-3 shadow-[0_10px_24px_rgba(15,45,69,0.14)] transition-colors hover:bg-white/[0.24] cursor-pointer w-fit'
                   >
                     <span aria-hidden='true'>✎</span>
                     Оставить заявку
@@ -805,17 +917,18 @@ export default function App() {
       </button>
 
       {/* MODAL */}
+      {/* BUG FIX 2 & 3: inert вместо aria-hidden на оверлее — блокирует фокус и скрин-ридеры для всего содержимого */}
       <div
         onClick={(e) => {
           if (e.target === e.currentTarget) closeModal();
         }}
         aria-hidden={!isModalOpen}
+        // BUG FIX 3: tabIndex="-1" на оверлее не помогает — используем inert на контейнере когда закрыт
         className={
           "fixed inset-0 z-[100] grid place-items-center bg-[rgba(20,55,80,0.52)] backdrop-blur-[4px] transition-[opacity,visibility] duration-300 " +
           (isModalOpen ? "opacity-100 visible" : "opacity-0 invisible")
         }
       >
-        {/* FIX: focus trap через ref, добавлен role=dialog правильно */}
         <div
           ref={modalRef}
           role='dialog'
@@ -847,7 +960,6 @@ export default function App() {
           </p>
 
           <form onSubmit={handleSubmit} noValidate>
-            {/* FIX: поля вынесены из .map() — каждый ref привязан напрямую */}
             <div className='flex flex-col gap-1.5 mt-[18px]'>
               <label
                 htmlFor='f-name'
