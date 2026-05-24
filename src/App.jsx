@@ -885,18 +885,18 @@ export default function App() {
                   key={step.title}
                   data-fade
                   data-delay={String(i + 1)}
-                  className='grid grid-cols-[48px_1fr] gap-6 items-start'
+                  className='grid grid-cols-[48px_1fr] gap-6 items-stretch min-h-[150px]'
                 >
                   {/* левая колонка: кружок + соединительная линия */}
-                  <div className='flex flex-col items-center'>
-                    <span className='flex items-center justify-center w-10 h-10 rounded-full border-[1.5px] border-[rgba(91,168,212,0.4)] bg-white/90 font-serif text-[17px] font-normal text-[#5BA8D4] shadow-[0_2px_12px_rgba(91,168,212,0.14)] leading-none shrink-0 mt-5'>
+                  <div className='relative flex flex-col items-center self-stretch'>
+                    <span className='relative z-10 flex items-center justify-center w-10 h-10 rounded-full border-[1.5px] border-[rgba(91,168,212,0.4)] bg-white/90 font-serif text-[17px] font-normal text-[#5BA8D4] shadow-[0_2px_12px_rgba(91,168,212,0.14)] leading-none shrink-0 mt-5'>
                       {String(i + 1)}
                     </span>
-                    {/* линия между шагами — только не после последнего */}
+
                     {i < steps.length - 1 && (
                       <div
                         aria-hidden='true'
-                        className='w-px flex-1 min-h-[28px] bg-gradient-to-b from-[rgba(91,168,212,0.3)] to-[rgba(91,168,212,0.08)] my-1'
+                        className='absolute top-[64px] bottom-[-6px] w-px bg-gradient-to-b from-[rgba(91,168,212,0.32)] to-[rgba(91,168,212,0.06)]'
                       />
                     )}
                   </div>
