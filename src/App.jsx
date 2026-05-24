@@ -1173,26 +1173,6 @@ export default function App() {
         <FaTelegramPlane className='text-[20px]' aria-hidden='true' />
       </a>
 
-      {/* Sticky CTA button */}
-      <button
-        type='button'
-        onClick={openModal}
-        aria-label='Записаться на консультацию'
-        className={
-          "fixed bottom-6 right-6 z-40 inline-flex items-center gap-2.5 bg-[#5BA8D4] text-white font-sans text-[13px] font-semibold tracking-[0.05em] pl-5 pr-4 py-3 rounded-full shadow-[0_10px_30px_rgba(91,168,212,0.42)] transition-[opacity,transform,box-shadow] duration-300 hover:bg-[#4A97C3] hover:shadow-[0_14px_38px_rgba(91,168,212,0.52)] hover:-translate-y-0.5 active:translate-y-0 cursor-pointer " +
-          (showStickyBtn
-            ? "opacity-100 translate-y-0 pointer-events-auto"
-            : "opacity-0 translate-y-4 pointer-events-none")
-        }
-      >
-        Записаться
-        <span
-          aria-hidden='true'
-          className='sticky-pulse flex items-center justify-center w-[22px] h-[22px] rounded-full bg-white/20 text-[11px]'
-        >
-          ↑
-        </span>
-      </button>
 
       {/* MODAL */}
       {/* BUG FIX 2 & 3: inert вместо aria-hidden на оверлее — блокирует фокус и скрин-ридеры для всего содержимого */}
