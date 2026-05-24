@@ -8,26 +8,24 @@ const phoneTel = "+79523307496";
 const services = [
   {
     title: "Поиск себя и своего пути",
-    description:
-      "Когда сложно понять, чего вы хотите, и куда двигаться дальше.",
+    description: "Когда сложно понять, чего вы хотите и куда двигаться дальше.",
     num: "01",
   },
   {
     title: "Самооценка и принятие себя",
-    description:
-      "Опора во внутреннем диалоге: меньше самокритики, больше поддержки к себе.",
+    description: "Меньше самокритики, больше поддержки и устойчивости внутри.",
     num: "02",
   },
   {
     title: "Тревога и стресс",
     description:
-      "Разбираем перегрузку, тревожные сценарии и то, что мешает жить спокойнее.",
+      "Разбираем перегрузку, тревожные сценарии и способы жить спокойнее.",
     num: "03",
   },
   {
     title: "Конфликты и отношения",
     description:
-      "Понятнее про границы, ожидания и то, как говорить и слышать друг друга.",
+      "Про границы, ожидания и то, как говорить и слышать друг друга.",
     num: "04",
   },
 ];
@@ -35,15 +33,15 @@ const services = [
 const steps = [
   {
     title: "Платформа",
-    body: "Онлайн на Яндекс Телемост — подключиться просто, конфиденциально, без установки приложения.",
+    body: "Онлайн через приложение Яндекс Телемост -  просто, конфиденциально и не требует установки приложения",
   },
   {
     title: "Первый контакт",
-    body: "Напишите примерный запрос — обсудим, смогу ли я помочь и подходит ли вам такой формат.",
+    body: "Напишите примерный запрос: обсудим мой формат и поймем, подходим ли друг другу.",
   },
   {
-    title: "Темп — ваш",
-    body: "Разовая консультация или продолжительная терапия — глубину и ритм выбираем вместе.",
+    title: "Комфортный темп — ваш",
+    body: "Разовая консультация или длительная работа: глубину и ритм выбираем вместе.",
   },
 ];
 
@@ -52,7 +50,7 @@ const telegramUsername = String(import.meta.env.VITE_TELEGRAM_USERNAME || "")
   .trim()
   .replace(/^@+/, "");
 
-/* ─── tiny hook: fade-in on scroll ─── */
+/* tiny hook: fade-in on scroll */
 function useFadeIn() {
   useEffect(() => {
     const els = document.querySelectorAll("[data-fade]");
@@ -71,7 +69,18 @@ function useFadeIn() {
   }, []);
 }
 
-/* ─── reusable atoms ─── */
+/* hook: show sticky button after scroll */
+function useStickyButton() {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > 420);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return visible;
+}
+
+/* reusable atoms */
 const SectionLabel = ({ children, className = "" }) => (
   <p
     className={
@@ -98,10 +107,23 @@ const BtnPrimary = ({ className = "", ...props }) => (
   <button
     {...props}
     className={
-      "inline-flex items-center gap-1.5 bg-copper text-white border-0 cursor-pointer font-sans text-[13px] font-medium tracking-[0.06em] px-6 py-2.5 rounded-full no-underline shadow-[0_6px_22px_rgba(181,98,46,0.28)] transition-[background,transform,box-shadow] duration-200 hover:bg-copper2 hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(181,98,46,0.38)] active:translate-y-0 disabled:opacity-65 " +
+      "inline-flex items-center gap-1.5 bg-copper text-white border-0 cursor-pointer font-sans text-[13px] font-medium tracking-[0.06em] px-6 py-2.5 rounded-full no-underline shadow-[0_10px_28px_rgba(95,149,181,0.28)] transition-[background,transform,box-shadow] duration-200 hover:bg-copper2 hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(95,149,181,0.38)] active:translate-y-0 disabled:opacity-65 " +
       className
     }
   />
+);
+
+/* ── Idea 3: Decorative divider ── */
+const Divider = () => (
+  <div className='flex items-center gap-4 py-1'>
+    <div className='flex-1 h-px bg-gradient-to-r from-transparent via-[rgba(137,174,197,0.5)] to-transparent' />
+    <div className='flex items-center gap-[7px]'>
+      <span className='block w-[5px] h-[5px] rounded-full bg-[rgba(137,174,197,0.38)]' />
+      <span className='block w-[7px] h-[7px] rotate-45 bg-[rgba(137,174,197,0.46)]' />
+      <span className='block w-[5px] h-[5px] rounded-full bg-[rgba(137,174,197,0.38)]' />
+    </div>
+    <div className='flex-1 h-px bg-gradient-to-r from-transparent via-[rgba(137,174,197,0.5)] to-transparent' />
+  </div>
 );
 
 export default function App() {
@@ -114,6 +136,7 @@ export default function App() {
   const headerRef = useRef(null);
 
   useFadeIn();
+  const showStickyBtn = useStickyButton();
 
   const closeModal = useCallback(() => setIsModalOpen(false), []);
   const openModal = () => setIsModalOpen(true);
@@ -165,9 +188,6 @@ export default function App() {
 
   useEffect(() => () => clearTimeout(closeTimerRef.current), []);
 
-  const botToken = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
-  const chatId = import.meta.env.VITE_TELEGRAM_CHAT_ID;
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
@@ -179,28 +199,31 @@ export default function App() {
       toast.error("Заполните все поля.");
       return;
     }
-    if (!botToken || !chatId) {
-      toast.error("Telegram bot не настроен.");
-      return;
-    }
 
     setIsSubmitting(true);
-    const text = `Новая заявка\n\nИмя: ${name}\nКонтакт: ${contact}\nСообщение: ${message}`;
     try {
-      const res = await fetch(
-        `https://api.telegram.org/bot${botToken}/sendMessage`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams({ chat_id: chatId, text }),
-        },
-      );
-      if (!res.ok) throw new Error();
+      const res = await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          contact,
+          message,
+          page: window.location.href,
+        }),
+      });
+
+      const result = await res.json().catch(() => ({}));
+
+      if (!res.ok || result?.ok === false) {
+        throw new Error(result.error || "Не удалось отправить заявку.");
+      }
+
       toast.success("Заявка отправлена");
       e.target.reset();
       closeTimerRef.current = setTimeout(closeModal, 600);
-    } catch {
-      toast.error("Ошибка отправки");
+    } catch (error) {
+      toast.error(error?.message || "Ошибка отправки");
     } finally {
       setIsSubmitting(false);
     }
@@ -208,65 +231,70 @@ export default function App() {
 
   return (
     <>
-      {/* ── HEADER ── */}
+      {/* HEADER */}
       <header
         ref={headerRef}
-        className='sticky top-0 z-50 flex items-center justify-between h-[98px] md:h-[118px] px-[18px] md:px-10 bg-cream/90 backdrop-blur-md border-b border-[rgba(180,156,130,0.28)]'
+        className='sticky top-0 z-50 border-b border-[rgba(137,174,197,0.24)] bg-[rgba(247,251,254,0.9)] backdrop-blur-md'
       >
-        <a
-          href='#'
-          aria-label='Карина Якимова — главная'
-          className='flex items-center min-w-0 mr-2 leading-none no-underline'
-        >
-          <img
-            src={asset("logo.svg")}
-            width='682'
-            height='182'
-            alt=''
-            decoding='async'
-            className='block h-16 md:h-[90px] w-auto max-w-[calc(100vw-92px)] md:max-w-[min(100%,720px)]'
-          />
-        </a>
+        <div className='grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-[18px] md:px-10 lg:grid-cols-[auto_minmax(0,1fr)_220px] lg:gap-8'>
+          <a
+            href='#'
+            aria-label='Карина Якимова — главная'
+            className='flex h-[98px] min-w-0 items-center leading-none no-underline md:h-[118px] lg:justify-self-start'
+          >
+            <img
+              src={asset("logo.svg")}
+              width='682'
+              height='182'
+              alt=''
+              decoding='async'
+              className='block h-16 w-auto max-w-full md:h-[90px]'
+            />
+          </a>
 
-        <nav aria-label='Основная навигация' className='hidden lg:flex gap-9'>
-          {[
-            ["#about", "Обо мне"],
-            ["#services", "Услуги"],
-            ["#process", "Формат"],
-            ["#pricing", "Стоимость"],
-            ["#contacts", "Контакты"],
-          ].map(([href, label]) => (
-            <a
-              key={href}
-              href={href}
-              className='text-[13px] tracking-[0.04em] text-sub no-underline transition-colors hover:text-ink'
-            >
-              {label}
-            </a>
-          ))}
-        </nav>
+          <nav
+            aria-label='Основная навигация'
+            className='hidden lg:flex items-center justify-center gap-1 xl:gap-2'
+          >
+            {[
+              ["#about", "Обо мне"],
+              ["#services", "Услуги"],
+              ["#process", "Формат"],
+              ["#pricing", "Стоимость"],
+              ["#contacts", "Контакты"],
+            ].map(([href, label]) => (
+              <a
+                key={href}
+                href={href}
+                className='inline-flex h-11 items-center justify-center rounded-full px-4 xl:px-5 text-[13px] tracking-[0.04em] text-sub no-underline transition-[color,background-color] hover:bg-white/70 hover:text-ink'
+              >
+                {label}
+              </a>
+            ))}
+          </nav>
 
-        <BtnPrimary
-          onClick={openModal}
-          type='button'
-          className='hidden lg:inline-flex'
-        >
-          Записаться
-        </BtnPrimary>
+          <BtnPrimary
+            onClick={openModal}
+            type='button'
+            className='max-lg:!hidden lg:!inline-flex lg:h-11 lg:min-w-[174px] lg:justify-center lg:justify-self-end lg:px-7 lg:py-0 lg:text-[13px]'
+          >
+            Записаться
+          </BtnPrimary>
 
-        <button
-          type='button'
-          aria-label={isMenuOpen ? "Закрыть меню" : "Открыть меню"}
-          onClick={() => setIsMenuOpen((v) => !v)}
-          className='lg:hidden flex items-center justify-center w-[42px] h-[42px] rounded-lg border-[1.5px] border-warm bg-transparent text-ink text-xl leading-none cursor-pointer'
-        >
-          {isMenuOpen ? "×" : "≡"}
-        </button>
+          <button
+            type='button'
+            aria-label={isMenuOpen ? "Закрыть меню" : "Открыть меню"}
+            onClick={() => setIsMenuOpen((v) => !v)}
+            className='flex h-[42px] w-[42px] items-center justify-center rounded-lg border-[1.5px] border-warm bg-transparent text-xl leading-none text-ink cursor-pointer lg:hidden'
+          >
+            {isMenuOpen ? "×" : "☰"}
+          </button>
+        </div>
       </header>
 
       {/* mobile nav */}
       {isMenuOpen && (
-        <div className='lg:hidden flex flex-col gap-4 px-[18px] py-5 bg-cream border-b border-[rgba(180,156,130,0.28)]'>
+        <div className='lg:hidden flex flex-col gap-4 px-[18px] py-5 bg-ice border-b border-[rgba(137,174,197,0.24)]'>
           {[
             ["#about", "Обо мне"],
             ["#services", "Услуги"],
@@ -287,15 +315,16 @@ export default function App() {
           </BtnPrimary>
         </div>
       )}
+
       <main>
-        {/* ── HERO ── */}
+        {/* HERO */}
         <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
           <section
             id='about'
             className='grid grid-cols-1 md:grid-cols-[1fr_420px] gap-10 md:gap-14 items-center py-[52px] md:py-[80px_70px] [scroll-margin-top:124px]'
           >
             <div data-fade>
-              <p className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.16em] text-mist bg-mist/10 px-3.5 py-[5px] rounded-full mb-6 before:content-[''] before:w-2 before:h-2 before:rounded-full before:bg-[#4ade80] before:animate-pulse before:shadow-[0_0_0_4px_rgba(74,222,128,0.35),0_0_12px_rgba(74,222,128,0.9)] before:shrink-0">
+              <p className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.16em] text-mist bg-powder/95 px-3.5 py-[5px] rounded-full mb-6 before:content-[''] before:w-2 before:h-2 before:rounded-full before:bg-[#8ccdf2] before:animate-pulse before:shadow-[0_0_0_4px_rgba(140,205,242,0.28),0_0_12px_rgba(140,205,242,0.62)] before:shrink-0">
                 Практикующий психолог
               </p>
               <h1 className='font-serif font-normal text-[clamp(52px,7vw,88px)] leading-none -tracking-[0.01em] text-bark [&_em]:italic [&_em]:text-copper'>
@@ -303,9 +332,9 @@ export default function App() {
                 <em>шаг за шагом</em>
               </h1>
               <p className='mt-6 text-base leading-[1.8] text-sub max-w-[44ch]'>
-                Помогаю справляться с повседневными трудностями, находить опору
-                и понимать себя. Студентка 4 курса по направлению «Кризисная
-                психология и медиация в образовании».
+                Меня зовут Карина Якимова. Я практикующий психолог помогаю
+                справляться с повседневными трудностями, находить опору и
+                понимать себя.».
               </p>
               <div className='mt-9 flex items-center gap-5 flex-wrap'>
                 <BtnPrimary type='button' onClick={openModal}>
@@ -326,7 +355,7 @@ export default function App() {
                 ].map((p) => (
                   <li
                     key={p}
-                    className='text-xs text-sub border border-warm rounded-full px-3.5 py-[5px] bg-white/55'
+                    className='text-xs text-sub border border-sky/70 rounded-full px-3.5 py-[5px] bg-white/72'
                   >
                     {p}
                   </li>
@@ -334,23 +363,28 @@ export default function App() {
               </ul>
             </div>
 
+            {/* ── Idea 5: Quote badge on hero card ── */}
             <div
               data-fade
               data-delay='2'
               className='animate-[heroFloat_7s_ease-in-out_infinite]'
             >
-              <div className='relative overflow-hidden rounded-[28px] border border-[rgba(180,156,130,0.45)] bg-[linear-gradient(155deg,#fff8f0_0%,#f4ede1_100%)] shadow-[0_30px_80px_rgba(90,70,50,0.12)] before:absolute before:inset-0 before:bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.7),transparent_45%)] before:pointer-events-none'>
-                <img
-                  src={asset("photos/yoga-sunrise.png")}
-                  alt=''
-                  className='block w-full h-[260px] object-cover scale-[1.02] transition-transform duration-[6000ms] hover:scale-[1.06]'
-                />
+              <div className='relative overflow-visible rounded-[28px] border border-[rgba(159,199,220,0.38)] bg-[linear-gradient(155deg,#fcfeff_0%,#eef7fd_46%,#dcecf7_100%)] shadow-[0_30px_80px_rgba(95,149,181,0.16)] before:absolute before:inset-0 before:rounded-[28px] before:bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.84),transparent_45%)] before:pointer-events-none'>
+                <div className='overflow-hidden rounded-t-[28px]'>
+                  <img
+                    src={asset("photos/yoga-sunrise.png")}
+                    alt=''
+                    className='block w-full h-[260px] object-cover scale-[1.02] transition-transform duration-[6000ms] hover:scale-[1.06]'
+                  />
+                </div>
+                {/* Quote badge */}
+
                 <div className='px-7 pt-6 pb-7'>
                   <SectionLabel>Бережное сопровождение</SectionLabel>
-                  <p className='font-serif italic text-[28px] font-normal text-copper leading-[1.35] mt-2.5'>
-                    Рядом в том темпе,
+                  <p className='font-serif italic text-[28px] font-normal text-mist2 leading-[1.35] mt-2.5'>
+                    Рядом в комфортном,
                     <br />
-                    который вам доступен
+                    для Вас темпе
                   </p>
                 </div>
               </div>
@@ -358,9 +392,9 @@ export default function App() {
           </section>
         </div>
 
-        {/* ── MOOD ── */}
+        {/* MOOD */}
         <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
-          <section className='py-16 border-t border-[rgba(180,156,130,0.22)]'>
+          <section className='py-16 border-t border-[rgba(137,174,197,0.2)] mt-8'>
             <div data-fade>
               <SectionLabel>Настроение</SectionLabel>
               <SectionH2>
@@ -377,7 +411,7 @@ export default function App() {
                   <img
                     src={asset(src)}
                     alt=''
-                    className='block w-full h-[220px] object-cover rounded-[20px]'
+                  className='block w-full h-[220px] object-cover rounded-[20px] shadow-[0_18px_45px_rgba(95,149,181,0.16)]'
                   />
                 </div>
               ))}
@@ -385,35 +419,45 @@ export default function App() {
           </section>
         </div>
 
-        {/* ── SERVICES ── */}
+        {/* ── Idea 3: Decorative divider ── */}
         <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
-          <section
-            id='services'
-            className='py-16 border-t border-[rgba(180,156,130,0.22)] [scroll-margin-top:124px]'
-          >
+          <Divider />
+        </div>
+
+        {/* SERVICES */}
+        <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
+          <section id='services' className='py-16 [scroll-margin-top:124px]'>
             <div data-fade>
               <SectionLabel>Услуги</SectionLabel>
               <SectionH2>
                 С чем <em>я работаю</em>
               </SectionH2>
             </div>
+            {/* ── Idea 2: Watermark number on hover ── */}
             <div
               data-fade
               data-delay='1'
-              className='grid grid-cols-1 sm:grid-cols-2 mt-11 rounded-[24px] overflow-hidden border-[1.5px] border-[rgba(180,156,130,0.35)] divide-y divide-[rgba(180,156,130,0.35)] sm:divide-y-0 sm:[&>article]:border-r-[1.5px] sm:[&>article]:border-[rgba(180,156,130,0.35)] sm:[&>article:nth-child(2n)]:border-r-0 sm:[&>article:nth-child(-n+2)]:border-b-[1.5px]'
+              className='grid grid-cols-1 sm:grid-cols-2 mt-11 rounded-[24px] overflow-hidden border-[1.5px] border-[rgba(137,174,197,0.34)] divide-y divide-[rgba(137,174,197,0.3)] sm:divide-y-0 sm:[&>article]:border-r-[1.5px] sm:[&>article]:border-[rgba(137,174,197,0.3)] sm:[&>article:nth-child(2n)]:border-r-0 sm:[&>article:nth-child(-n+2)]:border-b-[1.5px]'
             >
               {services.map((item) => (
                 <article
                   key={item.title}
-                  className='px-8 pt-8 pb-9 bg-[#fdfaf6] transition-colors hover:bg-white relative'
+                  className='group px-8 pt-8 pb-9 bg-[linear-gradient(180deg,#fdfefe_0%,#edf6fc_100%)] transition-colors hover:bg-white relative overflow-hidden'
                 >
-                  <p className='font-serif text-[13px] tracking-[0.18em] text-warm'>
+                  {/* Watermark */}
+                  <span
+                    aria-hidden='true'
+                    className='absolute right-[-8px] bottom-[-18px] font-serif font-bold text-[110px] leading-none text-mist/[0.08] pointer-events-none select-none transition-[transform,color] duration-300 group-hover:scale-110 group-hover:-translate-y-1.5 group-hover:text-mist/[0.12]'
+                  >
+                    {item.num}
+                  </span>
+                  <p className='font-serif text-[13px] tracking-[0.18em] text-mist relative z-10'>
                     {item.num}
                   </p>
-                  <h3 className='font-serif text-[26px] font-medium text-bark mt-2 leading-[1.25]'>
+                  <h3 className='font-serif text-[26px] font-medium text-bark mt-2 leading-[1.25] relative z-10'>
                     {item.title}
                   </h3>
-                  <p className='text-sm leading-[1.75] text-sub mt-3'>
+                  <p className='text-sm leading-[1.75] text-sub mt-3 relative z-10'>
                     {item.description}
                   </p>
                 </article>
@@ -422,12 +466,14 @@ export default function App() {
           </section>
         </div>
 
-        {/* ── PROCESS ── */}
+        {/* ── Idea 3: Decorative divider ── */}
         <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
-          <section
-            id='process'
-            className='py-16 border-t border-[rgba(180,156,130,0.22)] [scroll-margin-top:124px]'
-          >
+          <Divider />
+        </div>
+
+        {/* PROCESS */}
+        <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
+          <section id='process' className='py-16 [scroll-margin-top:124px]'>
             <div data-fade>
               <SectionLabel>Процесс</SectionLabel>
               <SectionH2>
@@ -440,7 +486,7 @@ export default function App() {
                   key={step.title}
                   data-fade
                   data-delay={String(i + 1)}
-                  className='grid grid-cols-[48px_1fr] gap-6 py-7 border-b border-[rgba(180,156,130,0.22)] items-start first:border-t first:border-[rgba(180,156,130,0.22)]'
+                  className='grid grid-cols-[48px_1fr] gap-6 py-7 border-b border-[rgba(137,174,197,0.2)] items-start first:border-t first:border-[rgba(137,174,197,0.2)]'
                 >
                   <span className='font-serif text-[40px] font-light text-copper/20 leading-none'>
                     {String(i + 1).padStart(2, "0")}
@@ -459,21 +505,21 @@ export default function App() {
           </section>
         </div>
 
-        {/* ── TRUST ── */}
+        {/* TRUST */}
         <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
-          <section className='py-16 border-t border-[rgba(180,156,130,0.22)]'>
+          <section className='py-16 border-t border-[rgba(137,174,197,0.2)]'>
             <div data-fade>
               <SectionLabel>Доверие</SectionLabel>
               <SectionH2 className='mb-7'>
                 Важно <em>знать</em>
               </SectionH2>
-              <div className='flex flex-col sm:flex-row items-start gap-5 sm:gap-10 p-9 sm:p-[52px_56px] rounded-[24px] border border-[rgba(180,156,130,0.38)] bg-[linear-gradient(130deg,#f8efe2_0%,#ede6d9_100%)]'>
-                <div className='shrink-0 w-12 h-12 rounded-xl bg-copper flex items-center justify-center text-[22px]'>
-                  🌿
+              <div className='flex flex-col sm:flex-row items-start gap-5 sm:gap-10 p-9 sm:p-[52px_56px] rounded-[24px] border border-[rgba(159,199,220,0.34)] bg-[linear-gradient(130deg,#fbfdff_0%,#eaf4fb_58%,#d8eaf5_100%)]'>
+                <div className='shrink-0 w-12 h-12 rounded-xl bg-mist text-white flex items-center justify-center text-[22px]'>
+                  ✓
                 </div>
                 <p className='text-base leading-[1.8] text-sub [&_strong]:text-bark [&_strong]:font-medium'>
                   Я сама регулярно прохожу <strong>личную терапию</strong> и
-                  работаю с<strong> супервизором</strong> — это моя
+                  работаю с <strong>супервизором</strong> — это моя
                   профессиональная этика и залог качества вашей поддержки.
                 </p>
               </div>
@@ -481,12 +527,14 @@ export default function App() {
           </section>
         </div>
 
-        {/* ── PRICING ── */}
+        {/* ── Idea 3: Decorative divider ── */}
         <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
-          <section
-            id='pricing'
-            className='py-16 border-t border-[rgba(180,156,130,0.22)] [scroll-margin-top:124px]'
-          >
+          <Divider />
+        </div>
+
+        {/* PRICING */}
+        <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
+          <section id='pricing' className='py-16 [scroll-margin-top:124px]'>
             <div data-fade>
               <SectionLabel>Оплата</SectionLabel>
               <SectionH2>
@@ -497,7 +545,7 @@ export default function App() {
               <div
                 data-fade
                 data-delay='1'
-                className='bg-[#fdfaf6] border-[1.5px] border-[rgba(180,156,130,0.35)] rounded-[20px] p-8 pb-9'
+                className='bg-[linear-gradient(180deg,#fcfeff_0%,#edf6fc_100%)] border-[1.5px] border-[rgba(159,199,220,0.34)] rounded-[20px] p-8 pb-9'
               >
                 <p className='text-xs tracking-[0.12em] uppercase text-mist'>
                   Информация
@@ -507,10 +555,9 @@ export default function App() {
                 </p>
                 <p className='text-sm leading-[1.7] text-sub mt-3.5'>
                   Фиксированной стоимости нет — сколько желаете и можете. Оплата
-                  производится до начала сессии посредством банковского перевода
-                  по номеру телефона или номеру карты. Подробная информация о
-                  минимальной стоимости сеанса представлена на странице записи
-                  по ссылке.
+                  производится до начала сессии банковским переводом по номеру
+                  телефона или карты. Подробная информация о минимальной
+                  стоимости сеанса есть на странице записи по ссылке.
                 </p>
               </div>
 
@@ -520,7 +567,7 @@ export default function App() {
                 rel='noopener noreferrer'
                 data-fade
                 data-delay='2'
-                className='border-[1.5px] border-[rgba(180,156,130,0.35)] rounded-[20px] p-8 pb-9 no-underline text-inherit bg-[linear-gradient(150deg,#f3ebe0,#ede4d5)]'
+                className='border-[1.5px] border-[rgba(159,199,220,0.34)] rounded-[20px] p-8 pb-9 no-underline text-inherit bg-[linear-gradient(150deg,#fcfeff,#edf6fc,#d9ebf6)]'
               >
                 <p className='text-xs tracking-[0.12em] uppercase text-mist'>
                   Онлайн-запись
@@ -536,21 +583,29 @@ export default function App() {
           </section>
         </div>
 
-        {/* ── CONTACTS ── */}
+        {/* CONTACTS */}
         <div className='max-w-[1180px] mx-auto px-[18px] md:px-10'>
           <section
             id='contacts'
-            className='pt-16 pb-20 border-t border-[rgba(180,156,130,0.22)] [scroll-margin-top:124px]'
+            className='pt-16 pb-20 border-t border-[rgba(137,174,197,0.2)] [scroll-margin-top:124px]'
           >
             <div
               data-fade
-              className='grid grid-cols-1 md:grid-cols-2 gap-9 md:gap-12 items-start bg-bark rounded-[28px] p-9 sm:p-[56px_60px]'
+              className='grid grid-cols-1 md:grid-cols-2 gap-9 md:gap-12 items-start bg-[linear-gradient(145deg,#27475f_0%,#335f7b_46%,#78accd_100%)] rounded-[28px] p-9 sm:p-[56px_60px]'
             >
               <div>
-                <p className='inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.2em] text-cream/40 mb-3.5 before:block before:w-5 before:h-px before:bg-cream/40'>
-                  Контакты
-                </p>
-                <h2 className='font-serif font-normal text-[clamp(32px,4.5vw,52px)] leading-[1.08] text-cream [&_em]:italic [&_em]:text-[#e4a97a]'>
+                <div className='mb-3.5 flex items-center gap-3'>
+                  <p className='inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.2em] text-cream/40 before:block before:w-5 before:h-px before:bg-cream/40'>
+                    Контакты
+                  </p>
+                  <span
+                    aria-hidden='true'
+                    className='grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-white/10 text-lg'
+                  >
+                    🌿
+                  </span>
+                </div>
+                <h2 className='font-serif font-normal text-[clamp(32px,4.5vw,52px)] leading-[1.08] text-cream [&_em]:italic [&_em]:text-[#dff2ff]'>
                   Записаться
                   <br />
                   или <em>задать вопрос</em>
@@ -569,7 +624,8 @@ export default function App() {
                     href={`tel:${phoneTel}`}
                     className='inline-flex items-center gap-2.5 text-sm font-medium text-cream no-underline bg-white/[0.08] border border-white/[0.14] rounded-full px-5 py-3 transition-colors hover:bg-white/[0.14] cursor-pointer w-fit'
                   >
-                    <span>📞</span> {phoneDisplay}
+                    <span aria-hidden='true'>☏</span>
+                    <span>Телефон:</span> {phoneDisplay}
                   </a>
                   {telegramUsername ? (
                     <a
@@ -578,7 +634,7 @@ export default function App() {
                       rel='noreferrer'
                       className='inline-flex items-center gap-2.5 text-sm font-medium text-cream no-underline bg-white/[0.08] border border-white/[0.14] rounded-full px-5 py-3 transition-colors hover:bg-white/[0.14] w-fit'
                     >
-                      <span>✈️</span> @{telegramUsername}
+                      <span>Telegram:</span> @{telegramUsername}
                     </a>
                   ) : (
                     <span className='text-[13px] text-cream/45'>
@@ -606,9 +662,10 @@ export default function App() {
                   <button
                     type='button'
                     onClick={openModal}
-                    className='inline-flex items-center gap-2.5 text-sm font-medium text-[#e4a97a] bg-white/[0.08] border-[1.5px] border-[#e4a97a]/50 rounded-full px-5 py-3 transition-colors hover:bg-white/[0.14] cursor-pointer w-fit'
+                    className='inline-flex items-center gap-2.5 text-sm font-medium text-[#dff2ff] bg-white/[0.08] border-[1.5px] border-[#dff2ff]/50 rounded-full px-5 py-3 transition-colors hover:bg-white/[0.14] cursor-pointer w-fit'
                   >
-                    ✉️ Оставить заявку
+                    <span aria-hidden='true'>✎</span>
+                    Оставить заявку
                   </button>
                 </div>
               </div>
@@ -616,20 +673,39 @@ export default function App() {
           </section>
         </div>
       </main>
-      {/* ── FOOTER ── */}
-      <footer className='border-t border-[rgba(180,156,130,0.22)] py-[22px] md:py-7 px-[18px] md:px-10 flex flex-col md:flex-row gap-1.5 md:gap-0 justify-between items-center text-center md:text-left text-xs text-warm tracking-[0.06em]'>
+
+      {/* FOOTER */}
+      <footer className='border-t border-[rgba(137,174,197,0.2)] py-[22px] md:py-7 px-[18px] md:px-10 flex flex-col md:flex-row gap-1.5 md:gap-0 justify-between items-center text-center md:text-left text-xs text-warm tracking-[0.06em]'>
         <p>Карина Якимова · Практикующий психолог · Онлайн</p>
         <p className='text-[11px]'>© {new Date().getFullYear()}</p>
       </footer>
 
-      {/* ── MODAL ── */}
+      {/* ── Idea 4: Sticky CTA button ── */}
+      <button
+        type='button'
+        onClick={openModal}
+        aria-label='Записаться'
+        className={
+          "fixed bottom-6 right-6 z-40 inline-flex items-center gap-2.5 bg-copper text-white font-sans text-[13px] font-medium tracking-[0.05em] pl-5 pr-4 py-3 rounded-full shadow-[0_10px_30px_rgba(95,149,181,0.42)] transition-[opacity,transform,box-shadow] duration-300 hover:bg-copper2 hover:shadow-[0_14px_38px_rgba(95,149,181,0.52)] hover:-translate-y-0.5 active:translate-y-0 cursor-pointer " +
+          (showStickyBtn
+            ? "opacity-100 translate-y-0 pointer-events-auto"
+            : "opacity-0 translate-y-4 pointer-events-none")
+        }
+      >
+        Записаться
+        <span className='flex items-center justify-center w-[22px] h-[22px] rounded-full bg-white/20 text-[11px]'>
+          ↑
+        </span>
+      </button>
+
+      {/* MODAL */}
       <div
         onClick={(e) => {
           if (e.target === e.currentTarget) closeModal();
         }}
         aria-hidden={!isModalOpen}
         className={
-          "fixed inset-0 z-[100] grid place-items-center bg-[rgba(18,12,6,0.62)] backdrop-blur-[4px] transition-[opacity,visibility] duration-300 " +
+          "fixed inset-0 z-[100] grid place-items-center bg-[rgba(26,52,69,0.52)] backdrop-blur-[4px] transition-[opacity,visibility] duration-300 " +
           (isModalOpen ? "opacity-100 visible" : "opacity-0 invisible")
         }
       >
@@ -638,7 +714,7 @@ export default function App() {
           aria-modal='true'
           aria-labelledby='modal-title'
           className={
-            "relative z-[1] bg-[#fdfaf6] border border-[rgba(180,156,130,0.45)] rounded-[24px] p-10 pb-11 w-[min(540px,calc(100vw-36px))] shadow-[0_32px_64px_rgba(30,18,8,0.22)] transition-transform duration-300 " +
+            "relative z-[1] bg-[linear-gradient(180deg,#fcfeff_0%,#edf6fc_100%)] border border-[rgba(159,199,220,0.34)] rounded-[24px] p-10 pb-11 w-[min(540px,calc(100vw-36px))] shadow-[0_32px_64px_rgba(63,111,141,0.22)] transition-transform duration-300 " +
             (isModalOpen ? "translate-y-0" : "translate-y-4")
           }
         >
@@ -646,7 +722,7 @@ export default function App() {
             type='button'
             aria-label='Закрыть'
             onClick={closeModal}
-            className='absolute top-3.5 right-3.5 w-8 h-8 rounded-full border border-sand bg-white cursor-pointer text-lg leading-none text-sub flex items-center justify-center transition-colors hover:bg-sand'
+            className='absolute top-3.5 right-3.5 w-8 h-8 rounded-full border border-sky/65 bg-white cursor-pointer text-lg leading-none text-sub flex items-center justify-center transition-colors hover:bg-powder'
           >
             ×
           </button>
@@ -694,7 +770,7 @@ export default function App() {
                   name={f.name}
                   required
                   placeholder={f.placeholder}
-                  className='w-full px-4 py-2.5 border-[1.5px] border-sand rounded-xl bg-white font-sans text-sm text-ink outline-none transition-[border-color,box-shadow] duration-200 focus:border-mist focus:shadow-[0_0_0_3px_rgba(95,116,100,0.14)]'
+                  className='w-full px-4 py-2.5 border-[1.5px] border-sky/65 rounded-xl bg-white font-sans text-sm text-ink outline-none transition-[border-color,box-shadow] duration-200 focus:border-mist focus:shadow-[0_0_0_3px_rgba(111,154,180,0.18)]'
                 />
               </div>
             ))}
@@ -711,7 +787,7 @@ export default function App() {
                 rows='4'
                 required
                 placeholder='Коротко опишите запрос'
-                className='w-full px-4 py-2.5 border-[1.5px] border-sand rounded-xl bg-white font-sans text-sm text-ink outline-none transition-[border-color,box-shadow] duration-200 resize-y min-h-[100px] focus:border-mist focus:shadow-[0_0_0_3px_rgba(95,116,100,0.14)]'
+                className='w-full px-4 py-2.5 border-[1.5px] border-sky/65 rounded-xl bg-white font-sans text-sm text-ink outline-none transition-[border-color,box-shadow] duration-200 resize-y min-h-[100px] focus:border-mist focus:shadow-[0_0_0_3px_rgba(111,154,180,0.18)]'
               />
             </div>
             <BtnPrimary type='submit' disabled={isSubmitting} className='mt-5'>
